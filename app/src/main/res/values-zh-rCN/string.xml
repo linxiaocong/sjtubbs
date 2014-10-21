@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">饮水思源</string>
+
+    <string-array name="tab_titles">
+        <item>今日十大</item>
+        <item>讨论区</item>
+    </string-array>
+
+    <string name="action_settings">设置</string>
+
+    <!-- SectionListFragment -->
+    <string name="sub_boards_dialog_title">请选择版面</string>
+    <string name="loading_more">正在加载更多</string>
+
+</resources>
