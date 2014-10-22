@@ -6,6 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.github.linxiaocong.sjtubbs.R;
+import io.github.linxiaocong.sjtubbs.activities.NewTopicActivity;
 import io.github.linxiaocong.sjtubbs.activities.ReplyListActivity;
 import io.github.linxiaocong.sjtubbs.dao.TopicDAO;
 import io.github.linxiaocong.sjtubbs.models.Board;
@@ -47,6 +51,7 @@ public class TopicListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mBoard = (Board) getArguments().getSerializable(EXTRA_BOARD);
         getActivity().setTitle(mBoard.getName());
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -76,7 +81,8 @@ public class TopicListFragment extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0 && !mIsLoading) {
+                if (firstVisibleItem + visibleItemCount == totalItemCount &&
+                        totalItemCount > 1 && !mIsLoading && mNextUrl != null) {
                     mIsLoading = true;
                     (new FetchTopicListTask()).execute(mNextUrl);
                 }
@@ -103,6 +109,23 @@ public class TopicListFragment extends Fragment {
         setupAdapter();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_topic_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_new_topic:
+                Intent intent = new Intent(getActivity(), NewTopicActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupAdapter() {

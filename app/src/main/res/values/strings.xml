@@ -3,14 +3,30 @@
 
     <string name="app_name">SJTU BBS</string>
     <string name="action_settings">Settings</string>
-
-    <!-- SectionListFragment -->
-    <string name="sub_boards_dialog_title">Select Board</string>
-    <string name="loading_more">loading more</string>
+    <string name="action_new_topic">New topic</string>
+    <string name="action_send">Post</string>
 
     <string-array name="tab_titles">
         <item>Top 10</item>
         <item>All Sections</item>
     </string-array>
+
+    <!-- Preferences -->
+    <string name="key_username">username</string>
+    <string name="key_password">password</string>
+    <string name="title_username">Username</string>
+    <string name="title_password">Password</string>
+    <string name="summary_username">Please enter your username</string>
+    <string name="summary_password">Please enter your password</string>
+    <string name="info_login_successfully">Login successfully</string>
+    <string name="error_wrong_password">Wrong username or password!</string>
+
+    <!-- SectionListFragment -->
+    <string name="sub_boards_dialog_title">Select Board</string>
+    <string name="loading_more">loading more</string>
+
+    <!-- NewTopicFragment -->
+    <string name="hint_topicTitle">Title</string>
+    <string name="hint_topicContent">Content</string>
 
 </resources>

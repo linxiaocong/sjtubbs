@@ -25,17 +25,17 @@ public class TopTenFragment extends Fragment {
     private ListView mListView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-	private ArrayList<Topic> mTopTen;
+    private ArrayList<Topic> mTopTen;
 
-	public static TopTenFragment newInstance() {
-		TopTenFragment fragment = new TopTenFragment();
-		return fragment;
-	}
+    public static TopTenFragment newInstance() {
+        TopTenFragment fragment = new TopTenFragment();
+        return fragment;
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,16 +77,16 @@ public class TopTenFragment extends Fragment {
         return view;
     }
 
-	private void setupAdapter() {
-		if (getActivity() == null)
-			return;
-		if (mTopTen != null) {
-			TopTenAdapter adapter = new TopTenAdapter(mTopTen);
+    private void setupAdapter() {
+        if (getActivity() == null)
+            return;
+        if (mTopTen != null) {
+            TopTenAdapter adapter = new TopTenAdapter(mTopTen);
             mListView.setAdapter(adapter);
-		} else {
+        } else {
             mListView.setAdapter(null);
-		}
-	}
+        }
+    }
 
     private class FetchTopTenTask extends AsyncTask<Void, Void, Void> {
         @Override
@@ -99,6 +99,7 @@ public class TopTenFragment extends Fragment {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(Void result) {
             if (mSwipeRefreshLayout.isRefreshing()) {
@@ -108,25 +109,25 @@ public class TopTenFragment extends Fragment {
         }
     }
 
-	private class TopTenAdapter extends ArrayAdapter<Topic> {
-		public TopTenAdapter(ArrayList<Topic> topics) {
-			super(getActivity(), 0, topics);
-		}
+    private class TopTenAdapter extends ArrayAdapter<Topic> {
+        public TopTenAdapter(ArrayList<Topic> topics) {
+            super(getActivity(), 0, topics);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = getActivity().getLayoutInflater().inflate(
-						R.layout.list_item_topic, parent, false);
-			}
-			Topic topic = getItem(position);
-			TextView textviewBoard = (TextView) convertView
-					.findViewById(R.id.textview_board);
-			textviewBoard.setText("[ " + topic.getBoard() + " ]");
-			TextView textviewTitle = (TextView) convertView
-					.findViewById(R.id.textview_title);
-			textviewTitle.setText(topic.getTitle());
-			return convertView;
-		}
-	}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getActivity().getLayoutInflater().inflate(
+                        R.layout.list_item_topic, parent, false);
+            }
+            Topic topic = getItem(position);
+            TextView textviewBoard = (TextView) convertView
+                    .findViewById(R.id.textview_board);
+            textviewBoard.setText("[ " + topic.getBoard() + " ]");
+            TextView textviewTitle = (TextView) convertView
+                    .findViewById(R.id.textview_title);
+            textviewTitle.setText(topic.getTitle());
+            return convertView;
+        }
+    }
 }
