@@ -1,7 +1,7 @@
 package io.github.linxiaocong.sjtubbs.activities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 
 import io.github.linxiaocong.sjtubbs.R;
@@ -15,7 +15,7 @@ public class TopicListActivity extends SingleFragmentActivity {
         super.onCreate(savedInstanceState);
         Board board = (Board) getIntent().getSerializableExtra(TopicListFragment.EXTRA_BOARD);
         setTitle(board.getName());
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = TopicListFragment.newInstance(board);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment).commit();

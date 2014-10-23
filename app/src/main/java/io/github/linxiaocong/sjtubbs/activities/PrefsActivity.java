@@ -1,10 +1,9 @@
-package io.github.linxiaocong.sjtubbs.fragments;
+package io.github.linxiaocong.sjtubbs.activities;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import android.preference.PreferenceFragment;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,20 +14,27 @@ import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 /**
  * Created by linxiaocong on 2014/10/21.
  */
-public class PreferencesFragment extends PreferenceFragment {
+public class PrefsActivity extends PreferenceActivity {
 
-    private SharedPreferences mSharedPreferences;
-    private static final String tag = "PreferencesFragment";
-
-    PreferenceFragment  newInstance() {
-        return new PreferencesFragment();
+    /*
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActionBar().setTitle(R.string.action_settings);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, (new PreferencesFragment()))
+                .commit();
     }
+    */
+
+    private static final String tag = "PrefsActivity";
+    private SharedPreferences mSharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
@@ -45,10 +51,10 @@ public class PreferencesFragment extends PreferenceFragment {
                     @Override
                     protected void onPostExecute(Boolean result) {
                         if (result == Boolean.TRUE) {
-                            Toast.makeText(getActivity(), R.string.info_login_successfully,
+                            Toast.makeText(PrefsActivity.this, R.string.info_login_successfully,
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getActivity(), R.string.error_wrong_password,
+                            Toast.makeText(PrefsActivity.this, R.string.error_wrong_password,
                                     Toast.LENGTH_SHORT).show();
                         }
                     }

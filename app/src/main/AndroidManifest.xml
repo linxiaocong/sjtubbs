@@ -24,11 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="io.github.linxiaocong.sjtubbs.activities.PreferencesActivity" />
-        <activity android:name="io.github.linxiaocong.sjtubbs.activities.SingleFragmentActivity" />
-        <activity android:name="io.github.linxiaocong.sjtubbs.activities.ReplyListActivity" />
-        <activity android:name="io.github.linxiaocong.sjtubbs.activities.TopicListActivity" />
-        <activity android:name="io.github.linxiaocong.sjtubbs.activities.NewTopicActivity" />
+        <activity android:name=".activities.PrefsActivity" />
+        <activity android:name=".activities.SingleFragmentActivity" />
+        <activity android:name=".activities.ReplyListActivity" />
+        <activity android:name=".activities.TopicListActivity" />
+        <activity android:name=".activities.NewTopicActivity" />
     </application>
 
 </manifest>

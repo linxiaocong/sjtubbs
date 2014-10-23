@@ -13,8 +13,8 @@ public class NewTopicActivity extends SingleFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setTitle(R.string.action_new_topic);
-        getFragmentManager()
+        getSupportActionBar().setTitle(R.string.action_new_topic);
+        getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, NewTopicFragment.newInstance())
                 .commit();

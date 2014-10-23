@@ -1,6 +1,6 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;

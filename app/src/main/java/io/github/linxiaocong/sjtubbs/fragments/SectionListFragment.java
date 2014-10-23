@@ -1,11 +1,10 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
 import android.app.Dialog;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +46,7 @@ public class SectionListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater,
-                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+                             ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_section_list, container,
                 false);
         mSectionListView = (ExpandableListView) view

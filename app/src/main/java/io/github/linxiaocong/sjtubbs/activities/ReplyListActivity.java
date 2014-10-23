@@ -1,7 +1,7 @@
 package io.github.linxiaocong.sjtubbs.activities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 
 import io.github.linxiaocong.sjtubbs.R;
@@ -16,7 +16,7 @@ public class ReplyListActivity extends SingleFragmentActivity {
         Topic topic = (Topic) getIntent().getSerializableExtra(
                 ReplyListFragment.EXTRA_TOPIC);
         setTitle(topic.getTitle());
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = ReplyListFragment.newInstance(topic);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment).commit();
