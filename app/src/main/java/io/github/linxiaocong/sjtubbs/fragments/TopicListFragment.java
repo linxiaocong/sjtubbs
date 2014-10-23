@@ -1,9 +1,9 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import io.github.linxiaocong.sjtubbs.R;
 import io.github.linxiaocong.sjtubbs.activities.NewTopicActivity;
 import io.github.linxiaocong.sjtubbs.activities.ReplyListActivity;
+import io.github.linxiaocong.sjtubbs.activities.UploadedPicturesActivity;
 import io.github.linxiaocong.sjtubbs.dao.TopicDAO;
 import io.github.linxiaocong.sjtubbs.models.Board;
 import io.github.linxiaocong.sjtubbs.models.Topic;
@@ -119,9 +120,15 @@ public class TopicListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
             case R.id.action_new_topic:
-                Intent intent = new Intent(getActivity(), NewTopicActivity.class);
+                intent = new Intent(getActivity(), NewTopicActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_upload_area:
+                intent = new Intent(getActivity(), UploadedPicturesActivity.class);
+                intent.putExtra(UploadedPicturesFragment.EXTRA_BOARD, mBoard);
                 startActivity(intent);
                 return true;
         }

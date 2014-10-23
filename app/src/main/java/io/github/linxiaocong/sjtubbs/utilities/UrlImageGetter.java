@@ -65,11 +65,11 @@ public class UrlImageGetter implements Html.ImageGetter {
                 f.deleteOnExit();
                 return null;
             }
-            // int width = Math.min(sWidth, bitmap.getWidth()) ;
-            int width = sWidth - 256;
-            double scale = (double) width / bitmap.getWidth();
-            int height = (int) (bitmap.getHeight() * scale);
-            bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+            //int width = Math.min(sWidth, bitmap.getWidth()) ;
+            //int width = sWidth - 256;
+            //double scale = (double) width / bitmap.getWidth();
+            //int height = (int) (bitmap.getHeight() * scale);
+            //bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
             Drawable drawable = new BitmapDrawable(context.getResources(), bitmap);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             return drawable;
@@ -83,6 +83,33 @@ public class UrlImageGetter implements Html.ImageGetter {
         }
     }
 
+    public static boolean savedToFile(String source, File f) {
+        try {
+            URL url;
+            InputStream in;
+            OutputStream out;
+            if (!source.startsWith("http")) {
+                url = new URL(BBSUtils.BBS_INDEX + source);
+            } else {
+                url = new URL(source);
+            }
+            in = url.openStream();
+            out = new FileOutputStream(f);
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer, 0, 1024)) != -1) {
+                out.write(buffer, 0, len);
+            }
+            in.close();
+            out.close();
+            Log.d(tag, "finished downloading file from: " + source);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public class FetchImageTask extends AsyncTask<String, Void, Drawable> {
 
         UrlDrawable mUrlDrawable;
@@ -93,31 +120,11 @@ public class UrlImageGetter implements Html.ImageGetter {
 
         @Override
         protected Drawable doInBackground(String... params) {
-            InputStream in = null;
-            OutputStream out = null;
             String source = params[0];
             String filename = source.substring(source.lastIndexOf('/') + 1);
             File f = new File(mContext.getCacheDir(), filename);
-            try {
-                URL url = null;
-                if (!source.startsWith("http")) {
-                    url = new URL(BBSUtils.BBS_INDEX + source);
-                } else {
-                    url = new URL(source);
-                }
-                in = url.openStream();
-                out = new FileOutputStream(f);
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = in.read(buffer, 0, 1024)) != -1) {
-                    out.write(buffer, 0, len);
-                }
-                in.close();
-                out.close();
-                Log.d(tag, "finished downloading image from: " + source);
+            if (savedToFile(params[0], f)) {
                 return getDrawableFromFile(mContext, f);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
             return null;
         }

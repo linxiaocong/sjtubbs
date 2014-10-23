@@ -190,11 +190,11 @@ public class BBSUtils {
         return sections;
     }
 
-    static ArrayList<Board> getBoards(String sectionUrl) {
+    public ArrayList<Board> getBoards(String sectionUrl) {
         return parseBoards(sectionUrl);
     }
 
-    static ArrayList<Board> parseBoards(String url) {
+    public ArrayList<Board> parseBoards(String url) {
         ArrayList<Board> boards = new ArrayList<Board>();
         ArrayList<Board> subBoards = null;
         try {
@@ -225,6 +225,29 @@ public class BBSUtils {
             e.printStackTrace();
         }
         return boards;
+    }
+
+    public String getUploadedPictures(String url, ArrayList<String> uploadedPictures) {
+        String nextUrl = null;
+        try {
+            Document doc = Jsoup.connect(url).get();
+            Elements pictureElements = doc.select("a[target=_blank]");
+            for (int i = pictureElements.size() - 1; i > 0; --i) {
+                uploadedPictures.add(pictureElements.get(i).attr("href"));
+            }
+            Elements linkElements = doc.getElementsByTag("a");
+            for (int i = linkElements.size() - 1; i > 0; --i) {
+                Element link = linkElements.get(i);
+                if (link.text().equals("上一页")) {
+                    nextUrl = BBS_INDEX + "/" + link.attr("href");
+                    Log.d(tag, "uploaded pictures nextUrl: " + nextUrl);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return nextUrl;
     }
 
     private byte[] getUrlBytes(String urlSpec) throws IOException {
