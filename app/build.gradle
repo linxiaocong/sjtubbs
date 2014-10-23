@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "io.github.linxiaocong.sjtubbs"
-        minSdkVersion 16
+        minSdkVersion 13
         targetSdkVersion 21
     }
 
