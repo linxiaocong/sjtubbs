@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_new_topic">New topic</string>
     <string name="action_send">Post</string>
+    <string name="action_upload">Upload Pictures</string>
     <string name="action_upload_area">Uploaded Pictures</string>
 
     <string-array name="tab_titles">
@@ -29,5 +30,7 @@
     <!-- NewTopicFragment -->
     <string name="hint_topicTitle">Title</string>
     <string name="hint_topicContent">Content</string>
+    <string name="info_post_successfully">Post successfully!</string>
+    <string name="error_post">Failed to post!</string>
 
 </resources>

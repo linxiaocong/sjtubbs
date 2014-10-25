@@ -21,7 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.github.linxiaocong.sjtubbs.R;
-import io.github.linxiaocong.sjtubbs.activities.NewTopicActivity;
+import io.github.linxiaocong.sjtubbs.activities.NewPostActivity;
 import io.github.linxiaocong.sjtubbs.activities.ReplyListActivity;
 import io.github.linxiaocong.sjtubbs.activities.UploadedPicturesActivity;
 import io.github.linxiaocong.sjtubbs.dao.TopicDAO;
@@ -123,7 +123,8 @@ public class TopicListFragment extends Fragment {
         Intent intent = null;
         switch (item.getItemId()) {
             case R.id.action_new_topic:
-                intent = new Intent(getActivity(), NewTopicActivity.class);
+                intent = new Intent(getActivity(), NewPostActivity.class);
+                intent.putExtra(NewPostFragment.EXTRA_BOARD, mBoard);
                 startActivity(intent);
                 return true;
             case R.id.action_upload_area:

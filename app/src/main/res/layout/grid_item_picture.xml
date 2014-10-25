@@ -2,7 +2,9 @@
 <ImageView
     android:id="@+id/imageView"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_width="160dp"
+    android:layout_height="160dp"
     android:layout_gravity="center"
-    android:scaleType="centerCrop" />
+    android:padding="5dp"
+    android:cropToPadding="true"
+    android:scaleType="centerCrop"/>

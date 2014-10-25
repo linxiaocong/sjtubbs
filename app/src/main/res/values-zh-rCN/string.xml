@@ -5,6 +5,7 @@
     <string name="action_settings">设置</string>
     <string name="action_new_topic">发表新帖子</string>
     <string name="action_send">发表</string>
+    <string name="action_upload">上传图片</string>
     <string name="action_upload_area">图片上载区</string>
 
     <string-array name="tab_titles">
@@ -27,5 +28,7 @@
     <!-- NewTopicFragment -->
     <string name="hint_topicTitle">标题</string>
     <string name="hint_topicContent">正文</string>
+    <string name="info_post_successfully">发布成功！</string>
+    <string name="error_post">发布失败！</string>
 
 </resources>

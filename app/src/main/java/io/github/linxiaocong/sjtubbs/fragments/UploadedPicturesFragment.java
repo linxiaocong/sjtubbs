@@ -1,5 +1,6 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import io.github.linxiaocong.sjtubbs.R;
+import io.github.linxiaocong.sjtubbs.activities.ImagePagerActivity;
 import io.github.linxiaocong.sjtubbs.models.Board;
 import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 import io.github.linxiaocong.sjtubbs.utilities.BitmapCache;
@@ -92,6 +95,16 @@ public class UploadedPicturesFragment extends Fragment {
                     mIsFetching = true;
                     (new FetchUploadedPicturesTask()).execute(mNextUrl);
                 }
+            }
+        });
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                intent.putExtra(ImagePagerActivity.EXTRA_PICTURES, mUploadedPictures);
+                intent.putExtra(ImagePagerActivity.EXTRA_CURRENT_ITEM, i);
+                intent.putExtra(ImagePagerActivity.EXTRA_NEXT_URL, mNextUrl);
+                startActivity(intent);
             }
         });
 

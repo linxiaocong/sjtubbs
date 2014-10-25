@@ -5,7 +5,9 @@ import android.util.LruCache;
 
 public class BitmapCache extends LruCache<String, Bitmap> {
 
-    private static BitmapCache mInstance;
+    private static BitmapCache sInstance;
+    private static int sScreenWidth;
+    private static int sScreenHeight;
 
     private BitmapCache(int maxSize) {
         super(maxSize);
@@ -17,11 +19,11 @@ public class BitmapCache extends LruCache<String, Bitmap> {
     }
 
     public synchronized static BitmapCache getInstance() {
-        if (mInstance == null) {
+        if (sInstance == null) {
             int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
             int maxSize = maxMemory / 8;
-            mInstance = new BitmapCache(maxSize);
+            sInstance = new BitmapCache(maxSize);
         }
-        return mInstance;
+        return sInstance;
     }
 }

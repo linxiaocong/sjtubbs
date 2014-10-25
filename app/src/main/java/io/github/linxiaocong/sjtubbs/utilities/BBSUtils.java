@@ -1,14 +1,32 @@
 package io.github.linxiaocong.sjtubbs.utilities;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +45,7 @@ public class BBSUtils {
     private static final String COOKIE_UTMPNUM = "utmpnum";
     private static final String COOKIE_UTMPUSERID = "utmpuserid";
     private HashMap<String, String> mCookies = new HashMap<String, String>();
+    private boolean mIsLoggedIn;
 
     public static synchronized BBSUtils getInstance() {
         if (mInstance == null) {
@@ -43,11 +62,14 @@ public class BBSUtils {
                     .method(Connection.Method.POST)
                     .execute();
             String userId = response.cookie(COOKIE_UTMPUSERID);
-            if (userId != null) {
+            String utmpKey = response.cookie(COOKIE_UTMPKEY);
+            String utmpNum = response.cookie(COOKIE_UTMPNUM);
+            if (userId != null && utmpKey != null && utmpNum != null) {
                 mCookies.clear();
-                mCookies.put(COOKIE_UTMPKEY, response.cookie(COOKIE_UTMPKEY));
-                mCookies.put(COOKIE_UTMPNUM, response.cookie(COOKIE_UTMPNUM));
+                mCookies.put(COOKIE_UTMPKEY, utmpKey);
+                mCookies.put(COOKIE_UTMPNUM, utmpNum);
                 mCookies.put(COOKIE_UTMPUSERID, userId);
+                mIsLoggedIn = true;
                 return true;
             }
         } catch (Exception e) {
@@ -55,6 +77,12 @@ public class BBSUtils {
         }
         mCookies.clear();
         return false;
+    }
+
+    public String getCookies() {
+        return COOKIE_UTMPNUM + "=" + mCookies.get(COOKIE_UTMPNUM) + " ;" +
+                COOKIE_UTMPKEY + "=" + mCookies.get(COOKIE_UTMPKEY) + " ;" +
+                COOKIE_UTMPUSERID + "=" + mCookies.get(COOKIE_UTMPUSERID);
     }
 
     public ArrayList<Topic> getTopTen() {
@@ -245,5 +273,69 @@ public class BBSUtils {
             e.printStackTrace();
         }
         return nextUrl;
+    }
+
+    public String uploadPicture(Context context, Uri uri, String boardName) {
+        if (!mIsLoggedIn) {
+            return null;
+        }
+        try {
+            HttpPost httpPost = new HttpPost(BBS_INDEX + "/bbsdoupload");
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            httpPost.addHeader("Cookie", getCookies());
+            httpPost.addHeader("Connection", "keep-alive");
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+            builder.addTextBody("board", boardName);
+            builder.addTextBody("level", "0");
+            builder.addTextBody("live", "180");
+            builder.addTextBody("exp", "");
+            builder.addTextBody("MAX_FILE_SIZE", "1048577");
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            File tempfile = File.createTempFile("upload_", ".jpg", context.getCacheDir());
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            int quality = 80;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+            while (byteArrayOutputStream.size() > 1048577) {
+                byteArrayOutputStream.reset();
+                quality -= 5;
+                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+            }
+            FileOutputStream outputStream = new FileOutputStream(tempfile);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+            bufferedOutputStream.write(byteArrayOutputStream.toByteArray());
+            bufferedOutputStream.close();
+            builder.addBinaryBody("up", tempfile, ContentType.APPLICATION_FORM_URLENCODED,
+                    tempfile.getName());
+            httpPost.setEntity(builder.build());
+            HttpResponse response = httpClient.execute(httpPost);
+            String responseHtml = EntityUtils.toString(response.getEntity());
+            Document doc = Jsoup.parse(responseHtml);
+            String url = doc.select("p > font").text();
+            return url;
+        } catch (Exception err) {
+
+        }
+        return null;
+    }
+
+    public boolean post(ArrayList<NameValuePair> nameValuePairs) {
+        try {
+            HttpPost httpPost = new HttpPost(BBS_INDEX + "/bbssnd");
+            DefaultHttpClient client = new DefaultHttpClient();
+            httpPost.addHeader("Cookie", getCookies());
+            httpPost.addHeader("Connection", "keep-alive");
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "GB2312"));
+            HttpResponse httpResponse = client.execute(httpPost);
+            String result = EntityUtils.toString(httpResponse.getEntity());
+            if (result == null || result.contains("ERROR")) {
+                return false;
+            }
+            return true;
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        return false;
     }
 }
