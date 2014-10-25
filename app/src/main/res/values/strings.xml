@@ -7,9 +7,11 @@
     <string name="action_send">Post</string>
     <string name="action_upload">Upload Pictures</string>
     <string name="action_upload_area">Uploaded Pictures</string>
+    <string name="action_favorite">Mark as Favorite</string>
 
     <string-array name="tab_titles">
         <item>Top 10</item>
+        <item>Favorites</item>
         <item>All Sections</item>
     </string-array>
 

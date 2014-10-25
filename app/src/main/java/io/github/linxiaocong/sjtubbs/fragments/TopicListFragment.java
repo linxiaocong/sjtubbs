@@ -24,6 +24,7 @@ import io.github.linxiaocong.sjtubbs.R;
 import io.github.linxiaocong.sjtubbs.activities.NewPostActivity;
 import io.github.linxiaocong.sjtubbs.activities.ReplyListActivity;
 import io.github.linxiaocong.sjtubbs.activities.UploadedPicturesActivity;
+import io.github.linxiaocong.sjtubbs.dao.FavoriteBoardsDAO;
 import io.github.linxiaocong.sjtubbs.dao.TopicDAO;
 import io.github.linxiaocong.sjtubbs.models.Board;
 import io.github.linxiaocong.sjtubbs.models.Topic;
@@ -32,10 +33,12 @@ public class TopicListFragment extends Fragment {
 
     public static final String EXTRA_BOARD = "extra_board";
 
+
     private Board mBoard;
     private String mNextUrl;
     private boolean mIsLoading = false;
     private ArrayList<Topic> mTopicList;
+    private boolean mIsFavorite = false;
     private ListView mListView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -53,6 +56,10 @@ public class TopicListFragment extends Fragment {
         mBoard = (Board) getArguments().getSerializable(EXTRA_BOARD);
         getActivity().setTitle(mBoard.getName());
         setHasOptionsMenu(true);
+        ArrayList<Board> favoriteBoards = (new FavoriteBoardsDAO(getActivity())).getFavoriteBoards();
+        if (favoriteBoards.indexOf(mBoard) >= 0) {
+            mIsFavorite = true;
+        }
     }
 
     @Override
@@ -115,6 +122,9 @@ public class TopicListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_topic_list, menu);
+        if (mIsFavorite) {
+            menu.getItem(0).setIcon(R.drawable.ic_action_important_dark);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -122,14 +132,27 @@ public class TopicListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = null;
         switch (item.getItemId()) {
-            case R.id.action_new_topic:
-                intent = new Intent(getActivity(), NewPostActivity.class);
-                intent.putExtra(NewPostFragment.EXTRA_BOARD, mBoard);
-                startActivity(intent);
+            case R.id.action_favorite:
+                FavoriteBoardsDAO favoriteBoardsDAO = new FavoriteBoardsDAO(getActivity());
+                ArrayList<Board> favoriteBoards = favoriteBoardsDAO.getFavoriteBoards();
+                if (mIsFavorite) {
+                    item.setIcon(R.drawable.ic_action_important);
+                    favoriteBoards.remove(mBoard);
+                } else {
+                    item.setIcon(R.drawable.ic_action_important_dark);
+                    favoriteBoards.add(mBoard);
+                }
+                favoriteBoardsDAO.saveFavoriteBoards(favoriteBoards);
+                mIsFavorite = !mIsFavorite;
                 return true;
             case R.id.action_upload_area:
                 intent = new Intent(getActivity(), UploadedPicturesActivity.class);
                 intent.putExtra(UploadedPicturesFragment.EXTRA_BOARD, mBoard);
+                startActivity(intent);
+                return true;
+            case R.id.action_new_topic:
+                intent = new Intent(getActivity(), NewPostActivity.class);
+                intent.putExtra(NewPostFragment.EXTRA_BOARD, mBoard);
                 startActivity(intent);
                 return true;
         }

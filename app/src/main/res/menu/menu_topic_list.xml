@@ -3,13 +3,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
     <item
-        android:id="@+id/action_new_topic"
-        android:icon="@drawable/ic_action_new"
-        android:title="@string/action_new_topic"
+        android:id="@+id/action_favorite"
+        android:icon="@drawable/ic_action_important"
+        android:title="@string/action_favorite"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_upload_area"
         android:icon="@drawable/ic_action_upload"
         android:title="@string/action_upload_area"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_new_topic"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/action_new_topic"
         app:showAsAction="always" />
 </menu>

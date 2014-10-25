@@ -49,17 +49,17 @@ public class SectionDAO {
             sections = BBSUtils.getInstance().getSectionList();
             if (sections != null && sections.size() > 0 && mContext != null) {
                 JSONArray arr = new JSONArray();
-                for (Section s : sections) {
-                    try {
+                try {
+                    for (Section s : sections) {
                         arr.put(s.toJSON());
-                        OutputStream out = mContext.openFileOutput(
-                                JSON_SECTIONS_FILENAME, Context.MODE_PRIVATE);
-                        Writer writer = new OutputStreamWriter(out);
-                        writer.write(arr.toString());
-                        writer.close();
-                    } catch (Exception e1) {
-
                     }
+                    OutputStream out = mContext.openFileOutput(
+                            JSON_SECTIONS_FILENAME, Context.MODE_PRIVATE);
+                    Writer writer = new OutputStreamWriter(out);
+                    writer.write(arr.toString());
+                    writer.close();
+                } catch (Exception err) {
+                    err.printStackTrace();
                 }
             }
         } catch (Exception e) {

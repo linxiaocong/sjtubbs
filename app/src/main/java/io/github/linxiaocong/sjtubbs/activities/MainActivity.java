@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import io.github.linxiaocong.sjtubbs.R;
+import io.github.linxiaocong.sjtubbs.fragments.FavoriteFragment;
 import io.github.linxiaocong.sjtubbs.fragments.SectionListFragment;
 import io.github.linxiaocong.sjtubbs.fragments.TopTenFragment;
 
@@ -134,6 +135,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     fragment = TopTenFragment.newInstance();
                     break;
                 case 1:
+                    fragment = FavoriteFragment.newInstance();
+                    break;
+                case 2:
                     fragment = SectionListFragment.newInstance();
                     break;
             }
@@ -142,7 +146,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override

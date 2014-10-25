@@ -116,4 +116,13 @@ public class Board implements Serializable {
         }
         return json;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Board) {
+            Board board = (Board)o;
+            return board.getName().equals(mName);
+        }
+        return super.equals(o);
+    }
 }
