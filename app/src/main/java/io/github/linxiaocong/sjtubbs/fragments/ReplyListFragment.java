@@ -40,7 +40,7 @@ public class ReplyListFragment extends Fragment {
 
     public static final String EXTRA_TOPIC = "extra_topic";
 
-    private static final String tag = "ListFragment";
+    private static final String tag = "ReplyListFragment";
 
     private ArrayList<Reply> mReplyList;
     private Topic mTopic;
@@ -112,7 +112,6 @@ public class ReplyListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String htmlText = mReplyList.get(i).getContent();
-                Log.d(tag, htmlText);
                 Document doc = Jsoup.parse(htmlText);
                 if (doc != null) {
                     Elements imagesElements = doc.getElementsByTag("img");

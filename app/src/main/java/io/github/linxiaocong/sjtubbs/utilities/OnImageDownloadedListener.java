@@ -12,7 +12,7 @@ import java.io.File;
  */
 public class OnImageDownloadedListener implements FileDownloader.OnFileDownloadedListener<ImageView> {
 
-    public static int BITMAP_WIDTH_THUMBNAIL = 400;
+    public static int BITMAP_WIDTH_THUMBNAIL = 500;
     public static String THUMBNAIL_PREFIX = "_thumbnail";
 
     private Context mContext;
