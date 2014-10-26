@@ -48,6 +48,7 @@ public class ImageViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         mPictureUrl = getArguments().getString(EXTRA_PICTURE_URL);
         mFileDownloader = new FileDownloader<ImageView>(getActivity(), new Handler());
         mFileDownloader.setOnFileDownloadedListener(

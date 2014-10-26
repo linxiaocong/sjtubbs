@@ -52,6 +52,7 @@ public class TopicListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         mBoard = (Board) getArguments().getSerializable(EXTRA_BOARD);
         getActivity().setTitle(mBoard.getName());
         setHasOptionsMenu(true);

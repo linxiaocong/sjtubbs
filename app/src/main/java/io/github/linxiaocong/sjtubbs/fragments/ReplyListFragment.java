@@ -60,6 +60,7 @@ public class ReplyListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         mTopic = (Topic) getArguments().getSerializable(EXTRA_TOPIC);
     }
 

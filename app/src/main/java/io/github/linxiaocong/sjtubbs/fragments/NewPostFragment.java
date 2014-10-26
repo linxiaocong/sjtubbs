@@ -67,7 +67,19 @@ public class NewPostFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
         setHasOptionsMenu(true);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mUsername = prefs.getString(getResources().getString(R.string.key_username),
+                "");
+        mPassword = prefs.getString(getResources().getString(R.string.key_password),
+                "");
+        mSignature = prefs.getString(getResources().getString(R.string.key_signature), "");
+
+        Log.d(tag, "Login User is: " + mUsername);
+
         mBoardName = getArguments().getString(EXTRA_BOARD_NAME);
         mIsReply = getArguments().getBoolean(EXTRA_IS_REPLY);
         if (mIsReply) {
@@ -76,12 +88,6 @@ public class NewPostFragment extends Fragment {
             (new GetReplyDataTask()).execute(mReplyUrl);
         }
         mNameValuePairs = new ArrayList<NameValuePair>();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUsername = prefs.getString(getResources().getString(R.string.key_username),
-                "");
-        mPassword = prefs.getString(getResources().getString(R.string.key_password),
-                "");
-        mSignature = prefs.getString(getResources().getString(R.string.key_signature), "");
     }
 
     @Override
