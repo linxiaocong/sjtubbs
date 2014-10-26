@@ -1,6 +1,7 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,16 +13,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.util.ArrayList;
 
 import io.github.linxiaocong.sjtubbs.R;
+import io.github.linxiaocong.sjtubbs.activities.ImagePagerActivity;
 import io.github.linxiaocong.sjtubbs.dao.ReplyDAO;
 import io.github.linxiaocong.sjtubbs.models.Reply;
 import io.github.linxiaocong.sjtubbs.models.Topic;
+import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 import io.github.linxiaocong.sjtubbs.utilities.UrlImageGetter;
 
 public class ReplyListFragment extends Fragment {
@@ -87,6 +96,32 @@ public class ReplyListFragment extends Fragment {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+        });
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String htmlText = mReplyList.get(i).getContent();
+                Log.d(tag, htmlText);
+                Document doc = Jsoup.parse(htmlText);
+                if (doc != null) {
+                    Elements imagesElements = doc.getElementsByTag("img");
+                    ArrayList<String> pictures = new ArrayList<String>();
+                    for (Element ele: imagesElements) {
+                        String link = ele.attr("src");
+                        if (!link.startsWith("http")) {
+                            link = BBSUtils.BBS_INDEX + "/" + link;
+                        }
+                        pictures.add(link);
+                    }
+                    if (pictures.size() >= 1) {
+                        Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                        intent.putExtra(ImagePagerActivity.EXTRA_PICTURES, pictures);
+                        intent.putExtra(ImagePagerActivity.EXTRA_CURRENT_ITEM, 0);
+                        startActivity(intent);
+                    }
+                }
             }
         });
 

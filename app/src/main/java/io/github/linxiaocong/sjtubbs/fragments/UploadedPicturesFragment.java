@@ -160,20 +160,13 @@ public class UploadedPicturesFragment extends Fragment {
             String source = params[0];
             String filename = source.substring(source.lastIndexOf('/') + 1);
             File f = new File(mContext.getCacheDir(), filename);
-            if (!f.exists()) {
-                Misc.savedToFile(source, f);
+            Misc.savedToFile(source, f);
+            Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f, 320);
+            if (bitmap != null) {
+                BitmapCache.getInstance().put(filename + "_thumbnail", bitmap);
+                return Misc.getDrawableFromBitmap(mContext, bitmap);
             }
-            Bitmap bitmap;
-            if ((bitmap = BitmapCache.getInstance().get(filename + "_thumbnail")) == null) {
-                Log.d(tag, "put bitmap thumbnail into cache: " + filename);
-                bitmap = Misc.getScaledBitmapFromFile(mContext, f, 320);
-                if (bitmap != null) {
-                    BitmapCache.getInstance().put(filename + "_thumbnail", bitmap);
-                }
-            } else {
-                Log.d(tag, "bitmap thumbnail is found in cache: " + filename);
-            }
-            return Misc.getDrawableFromBitmap(mContext, bitmap);
+            return null;
         }
 
         @Override
@@ -196,7 +189,29 @@ public class UploadedPicturesFragment extends Fragment {
             }
             ImageView imageView = (ImageView)convertView.findViewById(R.id.imageView);
             String pictureUrl = getItem(position);
-            (new FetchPictureTask(getActivity(), imageView)).execute(pictureUrl);
+            String filename = pictureUrl.substring(pictureUrl.lastIndexOf('/') + 1);
+            File f = new File(getActivity().getCacheDir(), filename);
+            Bitmap bitmap;
+            boolean bitmapFound = false;
+            if ((bitmap = BitmapCache.getInstance().get(filename + "_thumbnail")) == null) {
+                if (f.exists()) {
+                    bitmap = Misc.getScaledBitmapFromFile(getActivity(), f, 320);
+                    if (bitmap != null) {
+                        bitmapFound = true;
+                        Log.d(tag, "put bitmap thumbnail into cache: " + filename);
+                        BitmapCache.getInstance().put(filename + "_thumbnail", bitmap);
+                    }
+                }
+            } else {
+                Log.d(tag, "bitmap thumbnail is found in cache: " + filename);
+                bitmapFound = true;
+            }
+            if (!bitmapFound) {
+                (new FetchPictureTask(getActivity(), imageView)).execute(pictureUrl);
+            } else {
+                Drawable drawable = Misc.getDrawableFromBitmap(getActivity(), bitmap);
+                imageView.setImageDrawable(drawable);
+            }
             return convertView;
         }
     }

@@ -21,7 +21,7 @@ public class BitmapCache extends LruCache<String, Bitmap> {
     public synchronized static BitmapCache getInstance() {
         if (sInstance == null) {
             int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-            int maxSize = maxMemory / 8;
+            int maxSize = maxMemory / 4;
             sInstance = new BitmapCache(maxSize);
         }
         return sInstance;

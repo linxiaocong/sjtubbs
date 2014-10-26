@@ -43,7 +43,16 @@ public class ImageViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image_view, container, false);
         ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-        (new FetchPictureTask(getActivity(), imageView)).execute(mSource);
+        String filename = mSource.substring(mSource.lastIndexOf('/') + 1);
+        File f = new File(getActivity().getCacheDir(), filename);
+        if (f.exists()) {
+            Bitmap bitmap = Misc.getScaledBitmapFromFile(getActivity(), f,
+                    Misc.getScreenWidth(getActivity()));
+            Drawable drawable = Misc.getDrawableFromBitmap(getActivity(), bitmap);
+            imageView.setImageDrawable(drawable);
+        } else {
+            (new FetchPictureTask(getActivity(), imageView)).execute(mSource);
+        }
         return view;
     }
 
@@ -60,11 +69,9 @@ public class ImageViewFragment extends Fragment {
         @Override
         protected Drawable doInBackground(String... params) {
             String source = params[0];
-            String filename = source.substring(source.lastIndexOf('/') + 1);
+            String filename = mSource.substring(mSource.lastIndexOf('/') + 1);
             File f = new File(mContext.getCacheDir(), filename);
-            if (!f.exists()) {
-                Misc.savedToFile(source, f);
-            }
+            Misc.savedToFile(source, f);
             Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f,
                     Misc.getScreenWidth(mContext));
             return Misc.getDrawableFromBitmap(mContext, bitmap);
