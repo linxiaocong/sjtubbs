@@ -1,10 +1,9 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
@@ -31,13 +30,10 @@ public class ReplyListFragment extends Fragment {
 
     private static final String tag = "ListFragment";
 
-    private Context mContext;
-
     private ArrayList<Reply> mReplyList;
     private Topic mTopic;
     private String mNextUrl;
     private boolean mIsLoading = false;
-    private View mFooterView = null;
     private ListView mListView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -56,12 +52,6 @@ public class ReplyListFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mContext = activity;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.swipe_list, container, false);
 
@@ -74,7 +64,7 @@ public class ReplyListFragment extends Fragment {
                     mReplyList.clear();
                     adapter.notifyDataSetChanged();
                     mNextUrl = null;
-                    (new FetchReplyListTask()).execute(mTopic.getUrl());
+                    (new FetchReplyListTask(getActivity())).execute(mTopic.getUrl());
                     mSwipeRefreshLayout.setRefreshing(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -91,7 +81,7 @@ public class ReplyListFragment extends Fragment {
                 if (firstVisibleItem + visibleItemCount == totalItemCount &&
                         totalItemCount > 1 && !mIsLoading && mNextUrl != null) {
                     mIsLoading = true;
-                    (new FetchReplyListTask()).execute(mNextUrl);
+                    (new FetchReplyListTask(getActivity())).execute(mNextUrl);
                 }
             }
 
@@ -100,7 +90,7 @@ public class ReplyListFragment extends Fragment {
             }
         });
 
-        (new FetchReplyListTask()).execute(mTopic.getUrl());
+        (new FetchReplyListTask(getActivity())).execute(mTopic.getUrl());
         setupAdapter();
 
         return view;
@@ -114,6 +104,13 @@ public class ReplyListFragment extends Fragment {
     }
 
     private class FetchReplyListTask extends AsyncTask<String, Void, String> {
+
+        private Context mContext;
+
+        public FetchReplyListTask(Context context) {
+            mContext = context;
+        }
+
         @Override
         protected String doInBackground(String... params) {
             if (params[0] != null) {
@@ -151,7 +148,7 @@ public class ReplyListFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = ((Activity)mContext).getLayoutInflater().inflate(
+                convertView = getActivity().getLayoutInflater().inflate(
                         R.layout.list_item_reply, parent, false);
             }
 

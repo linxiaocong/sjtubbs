@@ -1,6 +1,5 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +33,8 @@ import io.github.linxiaocong.sjtubbs.utilities.Misc;
  */
 public class UploadedPicturesFragment extends Fragment {
 
+    public static final String tag = "UploadedPicturesFragment";
+
     public static final String EXTRA_BOARD = "extra_board";
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -41,7 +43,6 @@ public class UploadedPicturesFragment extends Fragment {
     private Board mBoard;
     private String mNextUrl;
     private boolean mIsFetching = false;
-    private Context mContext;
 
     public static UploadedPicturesFragment newInstance(Board board) {
         UploadedPicturesFragment fragment = new UploadedPicturesFragment();
@@ -55,12 +56,6 @@ public class UploadedPicturesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBoard = (Board)getArguments().getSerializable(EXTRA_BOARD);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mContext = activity;
     }
 
     @Override
@@ -153,9 +148,11 @@ public class UploadedPicturesFragment extends Fragment {
     private class FetchPictureTask extends AsyncTask<String, Void, Drawable> {
 
         private ImageView mImageView;
+        private Context mContext;
 
-        public FetchPictureTask(ImageView imageView) {
+        public FetchPictureTask(Context context, ImageView imageView) {
             mImageView = imageView;
+            mContext = context;
         }
 
         @Override
@@ -167,9 +164,14 @@ public class UploadedPicturesFragment extends Fragment {
                 Misc.savedToFile(source, f);
             }
             Bitmap bitmap;
-            if ((bitmap = BitmapCache.getInstance().get(filename)) == null) {
+            if ((bitmap = BitmapCache.getInstance().get(filename + "_thumbnail")) == null) {
+                Log.d(tag, "put bitmap thumbnail into cache: " + filename);
                 bitmap = Misc.getScaledBitmapFromFile(mContext, f, 320);
-                BitmapCache.getInstance().put(filename, bitmap);
+                if (bitmap != null) {
+                    BitmapCache.getInstance().put(filename + "_thumbnail", bitmap);
+                }
+            } else {
+                Log.d(tag, "bitmap thumbnail is found in cache: " + filename);
             }
             return Misc.getDrawableFromBitmap(mContext, bitmap);
         }
@@ -194,7 +196,7 @@ public class UploadedPicturesFragment extends Fragment {
             }
             ImageView imageView = (ImageView)convertView.findViewById(R.id.imageView);
             String pictureUrl = getItem(position);
-            (new FetchPictureTask(imageView)).execute(pictureUrl);
+            (new FetchPictureTask(getActivity(), imageView)).execute(pictureUrl);
             return convertView;
         }
     }

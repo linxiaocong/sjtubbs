@@ -1,6 +1,5 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -25,7 +24,6 @@ public class ImageViewFragment extends Fragment {
     public static final String EXTRA_SOURCE = "image_source";
 
     private String mSource;
-    private Context mContext;
 
     public static ImageViewFragment newInstance(String filename) {
         ImageViewFragment fragment = new ImageViewFragment();
@@ -33,12 +31,6 @@ public class ImageViewFragment extends Fragment {
         args.putString(EXTRA_SOURCE, filename);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mContext = activity;
     }
 
     @Override
@@ -51,16 +43,18 @@ public class ImageViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image_view, container, false);
         ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-        (new FetchPictureTask(imageView)).execute(mSource);
+        (new FetchPictureTask(getActivity(), imageView)).execute(mSource);
         return view;
     }
 
     private class FetchPictureTask extends AsyncTask<String, Void, Drawable> {
 
         private ImageView mImageView;
+        private Context mContext;
 
-        public FetchPictureTask(ImageView imageView) {
+        public FetchPictureTask(Context context, ImageView imageView) {
             mImageView = imageView;
+            mContext = context;
         }
 
         @Override

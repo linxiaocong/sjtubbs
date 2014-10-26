@@ -1,7 +1,5 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,8 +33,6 @@ public class TopicListFragment extends Fragment {
 
     public static final String EXTRA_BOARD = "extra_board";
 
-    private Context mContext;
-
     private Board mBoard;
     private String mNextUrl;
     private boolean mIsLoading = false;
@@ -63,12 +59,6 @@ public class TopicListFragment extends Fragment {
         if (favoriteBoards.indexOf(mBoard) >= 0) {
             mIsFavorite = true;
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mContext = activity;
     }
 
     @Override
@@ -139,7 +129,7 @@ public class TopicListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 FavoriteBoardsDAO favoriteBoardsDAO = new FavoriteBoardsDAO(getActivity());
@@ -214,13 +204,13 @@ public class TopicListFragment extends Fragment {
     private class TopicListAdapter extends ArrayAdapter<Topic> {
 
         public TopicListAdapter(ArrayList<Topic> topics) {
-            super(mContext, 0, topics);
+            super(getActivity(), 0, topics);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = ((Activity)mContext).getLayoutInflater().inflate(
+                convertView = getActivity().getLayoutInflater().inflate(
                         R.layout.list_item_topic, parent, false);
             }
             Topic topic = getItem(position);
