@@ -1,5 +1,7 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -39,7 +41,7 @@ public class UploadedPicturesFragment extends Fragment {
     private Board mBoard;
     private String mNextUrl;
     private boolean mIsFetching = false;
-    private static int sScreenWidth;
+    private Context mContext;
 
     public static UploadedPicturesFragment newInstance(Board board) {
         UploadedPicturesFragment fragment = new UploadedPicturesFragment();
@@ -53,9 +55,12 @@ public class UploadedPicturesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBoard = (Board)getArguments().getSerializable(EXTRA_BOARD);
-        if (getActivity() != null) {
-            sScreenWidth = Misc.getScreenWidth(getActivity());
-        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = activity;
     }
 
     @Override
@@ -108,7 +113,8 @@ public class UploadedPicturesFragment extends Fragment {
             }
         });
 
-        (new FetchUploadedPicturesTask()).execute(BBSUtils.BBS_INDEX + "/bbsfdoc2?board=" + mBoard.getName());
+        (new FetchUploadedPicturesTask()).execute(BBSUtils.BBS_INDEX + "/bbsfdoc2?board="
+                + mBoard.getName());
         return view;
     }
 
@@ -156,19 +162,16 @@ public class UploadedPicturesFragment extends Fragment {
         protected Drawable doInBackground(String... params) {
             String source = params[0];
             String filename = source.substring(source.lastIndexOf('/') + 1);
-            if (getActivity() == null) {
-                return null;
-            }
-            File f = new File(getActivity().getCacheDir(), filename);
+            File f = new File(mContext.getCacheDir(), filename);
             if (!f.exists()) {
                 Misc.savedToFile(source, f);
             }
             Bitmap bitmap;
             if ((bitmap = BitmapCache.getInstance().get(filename)) == null) {
-                bitmap = Misc.getScaledBitmapFromFile(getActivity(), f, sScreenWidth / 2);
+                bitmap = Misc.getScaledBitmapFromFile(mContext, f, 320);
                 BitmapCache.getInstance().put(filename, bitmap);
             }
-            return Misc.getDrawableFromBitmap(getActivity(), bitmap);
+            return Misc.getDrawableFromBitmap(mContext, bitmap);
         }
 
         @Override

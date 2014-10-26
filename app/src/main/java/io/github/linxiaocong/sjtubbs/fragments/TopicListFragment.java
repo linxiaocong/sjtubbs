@@ -1,5 +1,7 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ public class TopicListFragment extends Fragment {
 
     public static final String EXTRA_BOARD = "extra_board";
 
+    private Context mContext;
 
     private Board mBoard;
     private String mNextUrl;
@@ -60,6 +63,12 @@ public class TopicListFragment extends Fragment {
         if (favoriteBoards.indexOf(mBoard) >= 0) {
             mIsFavorite = true;
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = activity;
     }
 
     @Override
@@ -160,8 +169,6 @@ public class TopicListFragment extends Fragment {
     }
 
     private void setupAdapter() {
-        if (getActivity() == null)
-            return;
         if (mTopicList != null) {
             TopicListAdapter adapter = new TopicListAdapter(mTopicList);
             mListView.setAdapter(adapter);
@@ -207,13 +214,13 @@ public class TopicListFragment extends Fragment {
     private class TopicListAdapter extends ArrayAdapter<Topic> {
 
         public TopicListAdapter(ArrayList<Topic> topics) {
-            super(getActivity(), 0, topics);
+            super(mContext, 0, topics);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = getActivity().getLayoutInflater().inflate(
+                convertView = ((Activity)mContext).getLayoutInflater().inflate(
                         R.layout.list_item_topic, parent, false);
             }
             Topic topic = getItem(position);

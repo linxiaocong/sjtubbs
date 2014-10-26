@@ -1,5 +1,7 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +31,8 @@ public class ReplyListFragment extends Fragment {
 
     private static final String tag = "ListFragment";
 
+    private Context mContext;
+
     private ArrayList<Reply> mReplyList;
     private Topic mTopic;
     private String mNextUrl;
@@ -49,6 +53,12 @@ public class ReplyListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTopic = (Topic) getArguments().getSerializable(EXTRA_TOPIC);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = activity;
     }
 
     @Override
@@ -97,8 +107,6 @@ public class ReplyListFragment extends Fragment {
     }
 
     private void setupAdapter() {
-        if (getActivity() == null)
-            return;
         if (mReplyList != null)
             mListView.setAdapter(new ReplyListAdapter(mReplyList));
         else
@@ -113,7 +121,7 @@ public class ReplyListFragment extends Fragment {
                     mReplyList = new ArrayList<Reply>();
                 }
                 Log.d(tag, "getting replies for topic: " + mTopic.getTitle());
-                ReplyDAO replyDAO = new ReplyDAO(getActivity());
+                ReplyDAO replyDAO = new ReplyDAO(mContext);
                 return replyDAO.getReplyList(params[0], mReplyList);
             }
             return null;
@@ -143,7 +151,7 @@ public class ReplyListFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = getActivity().getLayoutInflater().inflate(
+                convertView = ((Activity)mContext).getLayoutInflater().inflate(
                         R.layout.list_item_reply, parent, false);
             }
 

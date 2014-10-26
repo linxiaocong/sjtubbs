@@ -1,5 +1,7 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -23,6 +25,7 @@ public class ImageViewFragment extends Fragment {
     public static final String EXTRA_SOURCE = "image_source";
 
     private String mSource;
+    private Context mContext;
 
     public static ImageViewFragment newInstance(String filename) {
         ImageViewFragment fragment = new ImageViewFragment();
@@ -30,6 +33,12 @@ public class ImageViewFragment extends Fragment {
         args.putString(EXTRA_SOURCE, filename);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = activity;
     }
 
     @Override
@@ -58,16 +67,13 @@ public class ImageViewFragment extends Fragment {
         protected Drawable doInBackground(String... params) {
             String source = params[0];
             String filename = source.substring(source.lastIndexOf('/') + 1);
-            if (getActivity() == null) {
-                return null;
-            }
-            File f = new File(getActivity().getCacheDir(), filename);
+            File f = new File(mContext.getCacheDir(), filename);
             if (!f.exists()) {
                 Misc.savedToFile(source, f);
             }
-            Bitmap bitmap = Misc.getScaledBitmapFromFile(getActivity(), f,
-                    Misc.getScreenWidth(getActivity()));
-            return Misc.getDrawableFromBitmap(getActivity(), bitmap);
+            Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f,
+                    Misc.getScreenWidth(mContext));
+            return Misc.getDrawableFromBitmap(mContext, bitmap);
         }
 
         @Override
