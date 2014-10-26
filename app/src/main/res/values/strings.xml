@@ -8,6 +8,7 @@
     <string name="action_upload">Upload Pictures</string>
     <string name="action_upload_area">Uploaded Pictures</string>
     <string name="action_favorite">Mark as Favorite</string>
+    <string name="action_reply">Reply</string>
 
     <string-array name="tab_titles">
         <item>Top 10</item>

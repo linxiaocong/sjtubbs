@@ -8,7 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 
 import io.github.linxiaocong.sjtubbs.R;
 import io.github.linxiaocong.sjtubbs.activities.ImagePagerActivity;
+import io.github.linxiaocong.sjtubbs.activities.NewPostActivity;
 import io.github.linxiaocong.sjtubbs.dao.ReplyDAO;
 import io.github.linxiaocong.sjtubbs.models.Reply;
 import io.github.linxiaocong.sjtubbs.models.Topic;
@@ -130,10 +133,38 @@ public class ReplyListFragment extends Fragment {
             }
         });
 
+        registerForContextMenu(mListView);
+
         (new FetchReplyListTask(getActivity())).execute(mTopic.getUrl());
         setupAdapter();
 
         return view;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.context_menu_reply_list, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+        switch (item.getItemId()) {
+            case R.id.menu_item_reply:
+                Log.d(tag, "Reply for position: " + position);
+                Reply reply = mReplyList.get(position);
+                Intent intent = new Intent(getActivity(), NewPostActivity.class);
+                intent.putExtra(NewPostFragment.EXTRA_BOARD_NAME, mTopic.getBoard());
+                intent.putExtra(NewPostFragment.EXTRA_IS_REPLY, true);
+                intent.putExtra(NewPostFragment.EXTRA_REPLY_TO, reply.getUser());
+                intent.putExtra(NewPostFragment.EXTRA_REPLY_URL, reply.getUrl());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     private void setupAdapter() {

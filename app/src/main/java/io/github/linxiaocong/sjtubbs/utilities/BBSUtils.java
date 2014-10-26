@@ -85,6 +85,10 @@ public class BBSUtils {
                 COOKIE_UTMPUSERID + "=" + mCookies.get(COOKIE_UTMPUSERID);
     }
 
+    public HashMap<String, String> getCookiesMap() {
+        return mCookies;
+    }
+
     public ArrayList<Topic> getTopTen() {
         String topTenUrl = BBS_INDEX + "/file/bbs/mobile/top100.html";
         ArrayList<Topic> topTen = new ArrayList<Topic>();
@@ -109,7 +113,7 @@ public class BBSUtils {
         return topTen;
     }
 
-    public String getTopicList(String boardUrl, ArrayList<Topic> topicList) {
+    public String getTopicList(String boardUrl, String boardName, ArrayList<Topic> topicList) {
         String nextUrl = null;
         try {
             boardUrl = boardUrl.replace("bbsdoc", "bbstdoc");
@@ -130,7 +134,7 @@ public class BBSUtils {
                 } else {
                     topicId = topicUrl.substring(topicUrl.lastIndexOf('=') + 1);
                 }
-                Topic topic = new Topic(topicId, "", topicTitle, topicAuthor, topicUrl);
+                Topic topic = new Topic(topicId, boardName, topicTitle, topicAuthor, topicUrl);
                 if (!topicList.contains(topic)) {
                     topicList.add(topic);
                 }

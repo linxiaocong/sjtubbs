@@ -40,8 +40,10 @@ public class FileDownloader<Token> extends HandlerThread {
     public void queueFile(Token token, String url) {
         Log.d(tag, "Got an URL: " + url);
         mRequestMap.put(token, url);
-        mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
-                .sendToTarget();
+        if (mHandler != null) {
+            mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
+                    .sendToTarget();
+        }
     }
 
     public void clearQueue() {

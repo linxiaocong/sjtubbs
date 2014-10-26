@@ -153,7 +153,8 @@ public class TopicListFragment extends Fragment {
                 return true;
             case R.id.action_new_topic:
                 intent = new Intent(getActivity(), NewPostActivity.class);
-                intent.putExtra(NewPostFragment.EXTRA_BOARD, mBoard);
+                intent.putExtra(NewPostFragment.EXTRA_BOARD_NAME, mBoard.getName());
+                intent.putExtra(NewPostFragment.EXTRA_IS_REPLY, false);
                 startActivity(intent);
                 return true;
         }
@@ -181,7 +182,7 @@ public class TopicListFragment extends Fragment {
                     mTopicList = new ArrayList<Topic>();
                 }
                 TopicDAO topicDAO = new TopicDAO();
-                return topicDAO.getTopicList(boardUrl, mTopicList);
+                return topicDAO.getTopicList(boardUrl, mBoard.getName(), mTopicList);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -8,6 +8,7 @@
     <string name="action_upload">上传图片</string>
     <string name="action_upload_area">图片上载区</string>
     <string name="action_favorite">收藏该板块</string>
+    <string name="action_reply">回复</string>
 
     <string-array name="tab_titles">
         <item>今日十大</item>

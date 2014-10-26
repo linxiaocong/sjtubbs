@@ -23,11 +23,14 @@ import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
 import io.github.linxiaocong.sjtubbs.R;
-import io.github.linxiaocong.sjtubbs.models.Board;
 import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 
 /**
@@ -35,19 +38,27 @@ import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
  */
 public class NewPostFragment extends Fragment {
 
-    public static final String EXTRA_BOARD = "extra_board";
+    public static final String EXTRA_BOARD_NAME = "extra_board_name";
+    public static final String EXTRA_IS_REPLY = "extra_is_reply";
+    public static final String EXTRA_REPLY_URL = "extra_reply_url";
+    public static final String EXTRA_REPLY_TO = "extra_reply_to";
 
     private final int REQUEST_CODE_GALLERY = 1;
     private final String tag = "NewPostFragment";
 
     private EditText mEditTextTitle;
     private EditText mEditTextContent;
-    private Board mBoard;
 
-    public static NewPostFragment newInstance(Board board) {
+    ArrayList<NameValuePair> mNameValuePairs;
+    private String mBoardName;
+    private boolean mIsReply;
+    private String mReplyTo;
+    private String mReplyUrl;
+    private String mUsername;
+    private String mPassword;
+
+    public static NewPostFragment newInstance(Bundle args) {
         NewPostFragment fragment = new NewPostFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(EXTRA_BOARD, board);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,20 +67,19 @@ public class NewPostFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mBoard = (Board)getArguments().getSerializable(EXTRA_BOARD);
+        mBoardName = getArguments().getString(EXTRA_BOARD_NAME);
+        mIsReply = getArguments().getBoolean(EXTRA_IS_REPLY);
+        if (mIsReply) {
+            mReplyTo = getArguments().getString(EXTRA_REPLY_TO);
+            mReplyUrl = getArguments().getString(EXTRA_REPLY_URL);
+            (new GetReplyDataTask()).execute(mReplyUrl);
+        }
+        mNameValuePairs = new ArrayList<NameValuePair>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        AsyncTask<String, Void, Void> loginTask = new AsyncTask<String, Void, Void>() {
-            @Override
-            protected Void doInBackground(String... params) {
-                BBSUtils.getInstance().login(params[0], params[1]);
-                return null;
-            }
-        };
-        String username = prefs.getString(getResources().getString(R.string.key_username),
+        mUsername = prefs.getString(getResources().getString(R.string.key_username),
                 "");
-        String password = prefs.getString(getResources().getString(R.string.key_password),
+        mPassword = prefs.getString(getResources().getString(R.string.key_password),
                 "");
-        loginTask.execute(username, password);
     }
 
     @Override
@@ -104,6 +114,23 @@ public class NewPostFragment extends Fragment {
                 startActivityForResult(intent, REQUEST_CODE_GALLERY);
                 return true;
             case R.id.action_send:
+                mNameValuePairs.add(new BasicNameValuePair("signature", "1"));
+                mNameValuePairs.add(new BasicNameValuePair("autocr", "on"));
+                mNameValuePairs.add(new BasicNameValuePair("up", ""));
+                mNameValuePairs.add(new BasicNameValuePair("MAX_FILE_SIZE", "1048577"));
+                mNameValuePairs.add(new BasicNameValuePair("level", "0"));
+                mNameValuePairs.add(new BasicNameValuePair("live", "180"));
+                mNameValuePairs.add(new BasicNameValuePair("exp", "0"));
+                mNameValuePairs.add(new BasicNameValuePair("board", mBoardName));
+                mNameValuePairs.add(new BasicNameValuePair("title", mEditTextTitle.getText().toString()));
+                mNameValuePairs.add(new BasicNameValuePair("text", mEditTextContent.getText().toString()));
+                if (!mIsReply) {
+                    mNameValuePairs.add(new BasicNameValuePair("file", ""));
+                    mNameValuePairs.add(new BasicNameValuePair("reidstr", ""));
+                    mNameValuePairs.add(new BasicNameValuePair("reply_to_user", ""));
+                } else {
+                    mNameValuePairs.add(new BasicNameValuePair("reply_to_user", mReplyTo));
+                }
                 (new PostTask()).execute();
                 return true;
         }
@@ -135,7 +162,8 @@ public class NewPostFragment extends Fragment {
     class UploadTask extends AsyncTask<Uri, Void, String> {
         @Override
         protected String doInBackground(Uri... params) {
-            return BBSUtils.getInstance().uploadPicture(getActivity(), params[0], mBoard.getName());
+            BBSUtils.getInstance().login(mUsername, mPassword);
+            return BBSUtils.getInstance().uploadPicture(getActivity(), params[0], mBoardName);
         }
         @Override
         protected void onPostExecute(String result) {
@@ -146,24 +174,47 @@ public class NewPostFragment extends Fragment {
         }
     }
 
+    class GetReplyDataTask extends AsyncTask<String, Void, String[]> {
+        @Override
+        protected String[] doInBackground(String... params) {
+            String[] results = new String[2];  // resutls[0] for title
+                                                // results[1] for content
+            Log.d(tag, "ReplyUrl is: " + params[0]);
+            BBSUtils.getInstance().login(mUsername, mPassword);
+            try {
+                Document document = Jsoup.connect(params[0])
+                        .cookies(BBSUtils.getInstance().getCookiesMap()).get();
+                Elements elements = document.getElementsByTag("input");
+                for (Element element : elements) {
+                    if (element.attr("name").equals("file")) {
+                        mNameValuePairs.add(new BasicNameValuePair("file", element.attr("value")));
+                    } else if (element.attr("name").equals("reidstr")) {
+                        mNameValuePairs.add(new BasicNameValuePair("reidstr", element.attr("value")));
+                    } else if (element.attr("name").equals("title")) {
+                        results[0] = element.attr("value");
+                    }
+                }
+                Element textArea = document.select("#text").first();
+                results[1] = '\n' + textArea.text();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return results;
+        }
+        @Override
+        protected void onPostExecute(String[] results) {
+            if (results != null) {
+                mEditTextTitle.setText(results[0]);
+                mEditTextContent.setText(results[1]);
+            }
+        }
+    }
+
     class PostTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
-            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("signature", "1"));
-            nameValuePairs.add(new BasicNameValuePair("autocr", "on"));
-            nameValuePairs.add(new BasicNameValuePair("up", ""));
-            nameValuePairs.add(new BasicNameValuePair("MAX_FILE_SIZE", "1048577"));
-            nameValuePairs.add(new BasicNameValuePair("level", "0"));
-            nameValuePairs.add(new BasicNameValuePair("live", "180"));
-            nameValuePairs.add(new BasicNameValuePair("exp", "0"));
-            nameValuePairs.add(new BasicNameValuePair("board", mBoard.getName()));
-            nameValuePairs.add(new BasicNameValuePair("file", ""));
-            nameValuePairs.add(new BasicNameValuePair("reidstr", ""));
-            nameValuePairs.add(new BasicNameValuePair("reply_to_user", ""));
-            nameValuePairs.add(new BasicNameValuePair("title", mEditTextTitle.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("text", mEditTextContent.getText().toString()));
-            return BBSUtils.getInstance().post(nameValuePairs);
+            BBSUtils.getInstance().login(mUsername, mPassword);
+            return BBSUtils.getInstance().post(mNameValuePairs);
         }
         @Override
         protected void onPostExecute(Boolean result) {
