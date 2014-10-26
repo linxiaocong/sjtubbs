@@ -1,16 +1,26 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
+import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import io.github.linxiaocong.sjtubbs.R;
 import io.github.linxiaocong.sjtubbs.utilities.FileDownloader;
@@ -22,15 +32,15 @@ import io.github.linxiaocong.sjtubbs.utilities.OnImageDownloadedListener;
  */
 public class ImageViewFragment extends Fragment {
 
-    public static final String EXTRA_SOURCE = "image_source";
+    public static final String EXTRA_PICTURE_URL = "extra_pictureUrl";
 
     private String mPictureUrl;
     private FileDownloader<ImageView> mFileDownloader;
 
-    public static ImageViewFragment newInstance(String filename) {
+    public static ImageViewFragment newInstance(String pictureUrl) {
         ImageViewFragment fragment = new ImageViewFragment();
         Bundle args = new Bundle();
-        args.putString(EXTRA_SOURCE, filename);
+        args.putString(EXTRA_PICTURE_URL, pictureUrl);
         fragment.setArguments(args);
         return fragment;
     }
@@ -38,7 +48,7 @@ public class ImageViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPictureUrl = getArguments().getString(EXTRA_SOURCE);
+        mPictureUrl = getArguments().getString(EXTRA_PICTURE_URL);
         mFileDownloader = new FileDownloader<ImageView>(getActivity(), new Handler());
         mFileDownloader.setOnFileDownloadedListener(
                 new OnImageDownloadedListener(getActivity(), Misc.getScreenWidth(getActivity())));
@@ -72,7 +82,55 @@ public class ImageViewFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        registerForContextMenu(imageView);
         return view;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.context_menu_imageview, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_saveImage:
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    File dir = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES), "SJTU BBS");
+                    if (!dir.exists()) {
+                        dir.mkdir();
+                    }
+                    String filename = mPictureUrl.substring(mPictureUrl.lastIndexOf('/') + 1);
+                    File fileOriginal = new File(getActivity().getCacheDir(), filename);
+                    File fileNew = new File(dir.getAbsolutePath(), filename);
+                    try {
+                        InputStream inputStream = new FileInputStream(fileOriginal);
+                        OutputStream outputStream = new FileOutputStream(fileNew);
+                        byte[] buffer = new byte[1025];
+                        int len;
+                        while ((len = inputStream.read(buffer, 0, 1024)) != -1) {
+                            outputStream.write(buffer, 0, len);
+                        }
+                        inputStream.close();
+                        outputStream.close();
+                        ContentValues values = new ContentValues();
+                        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+                        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                        values.put(MediaStore.MediaColumns.DATA, fileNew.getAbsolutePath());
+                        getActivity().getContentResolver()
+                                .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                        Toast.makeText(getActivity(), R.string.info_imageSaved,
+                                Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), R.string.error_imageFailed,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override

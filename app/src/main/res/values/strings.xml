@@ -3,12 +3,13 @@
 
     <string name="app_name">SJTU BBS</string>
     <string name="action_settings">Settings</string>
-    <string name="action_new_topic">New topic</string>
+    <string name="action_newTopic">New topic</string>
     <string name="action_send">Post</string>
     <string name="action_upload">Upload Pictures</string>
-    <string name="action_upload_area">Uploaded Pictures</string>
+    <string name="action_uploadArea">Uploaded Pictures</string>
     <string name="action_favorite">Mark as Favorite</string>
     <string name="action_reply">Reply</string>
+    <string name="action_saveImage">Save Photo</string>
 
     <string-array name="tab_titles">
         <item>Top 10</item>
@@ -17,12 +18,18 @@
     </string-array>
 
     <!-- Preferences -->
+    <string name="group_account">Account</string>
+    <string name="group_general">General</string>
     <string name="key_username">username</string>
     <string name="key_password">password</string>
+    <string name="key_signature">signature</string>
     <string name="title_username">Username</string>
     <string name="title_password">Password</string>
+    <string name="title_signature">Post Signature</string>
     <string name="summary_username">Please enter your username</string>
     <string name="summary_password">Please enter your password</string>
+    <string name="summary_signature">Enter the signature that will insert into your post</string>
+    <string name="default_signature">--- From Android Client</string>
     <string name="info_login_successfully">Login successfully</string>
     <string name="error_wrong_password">Wrong username or password!</string>
 
@@ -35,5 +42,9 @@
     <string name="hint_topicContent">Content</string>
     <string name="info_post_successfully">Post successfully!</string>
     <string name="error_post">Failed to post!</string>
+
+    <!-- ImageViewFragment -->
+    <string name="info_imageSaved">Saved</string>
+    <string name="error_imageFailed">Save failed!</string>
 
 </resources>

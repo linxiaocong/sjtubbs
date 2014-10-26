@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
-        android:key="@string/key_username"
-        android:summary="@string/summary_username"
-        android:title="@string/title_username"/>
-    <EditTextPreference
-        android:key="@string/key_password"
-        android:password="true"
-        android:summary="@string/summary_password"
-        android:title="@string/title_password"/>
+    <PreferenceCategory android:title="@string/group_account">
+        <EditTextPreference
+            android:key="@string/key_username"
+            android:summary="@string/summary_username"
+            android:title="@string/title_username"/>
+        <EditTextPreference
+            android:key="@string/key_password"
+            android:password="true"
+            android:summary="@string/summary_password"
+            android:title="@string/title_password"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/group_general">
+        <EditTextPreference
+            android:defaultValue="@string/default_signature"
+            android:key="@string/key_signature"
+            android:summary="@string/summary_signature"
+            android:title="@string/title_signature"/>
+    </PreferenceCategory>
 </PreferenceScreen>

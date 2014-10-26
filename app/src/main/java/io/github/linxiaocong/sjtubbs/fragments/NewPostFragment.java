@@ -56,6 +56,7 @@ public class NewPostFragment extends Fragment {
     private String mReplyUrl;
     private String mUsername;
     private String mPassword;
+    private String mSignature;
 
     public static NewPostFragment newInstance(Bundle args) {
         NewPostFragment fragment = new NewPostFragment();
@@ -80,6 +81,7 @@ public class NewPostFragment extends Fragment {
                 "");
         mPassword = prefs.getString(getResources().getString(R.string.key_password),
                 "");
+        mSignature = prefs.getString(getResources().getString(R.string.key_signature), "");
     }
 
     @Override
@@ -88,6 +90,7 @@ public class NewPostFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_new_post, container, false);
         mEditTextTitle = (EditText)view.findViewById(R.id.editText_title);
         mEditTextContent = (EditText)view.findViewById(R.id.editText_content);
+        mEditTextContent.setText("\n" + mSignature);
         return view;
     }
 
@@ -169,7 +172,7 @@ public class NewPostFragment extends Fragment {
         protected void onPostExecute(String result) {
             Log.d(tag, "uploaded file to: " + result);
             String content = mEditTextContent.getText().toString();
-            content = content + "\n" + result;
+            content = result + "\n" + content;
             mEditTextContent.setText(content);
         }
     }
@@ -195,7 +198,7 @@ public class NewPostFragment extends Fragment {
                     }
                 }
                 Element textArea = document.select("#text").first();
-                results[1] = '\n' + textArea.text();
+                results[1] = textArea.text();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -205,7 +208,7 @@ public class NewPostFragment extends Fragment {
         protected void onPostExecute(String[] results) {
             if (results != null) {
                 mEditTextTitle.setText(results[0]);
-                mEditTextContent.setText(results[1]);
+                mEditTextContent.setText(mEditTextContent.getText() + "\n" + results[1]);
             }
         }
     }

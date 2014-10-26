@@ -14,7 +14,7 @@ public class NewPostActivity extends SingleFragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getIntent().getExtras();
-        getSupportActionBar().setTitle(R.string.action_new_topic);
+        getSupportActionBar().setTitle(R.string.action_newTopic);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, NewPostFragment.newInstance(args))

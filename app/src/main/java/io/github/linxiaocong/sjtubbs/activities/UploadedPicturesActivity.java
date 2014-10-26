@@ -15,7 +15,7 @@ public class UploadedPicturesActivity extends SingleFragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Board board = (Board)getIntent().getSerializableExtra(UploadedPicturesFragment.EXTRA_BOARD);
-        setTitle(board.getName() + " " + getResources().getString(R.string.action_upload_area));
+        setTitle(board.getName() + " " + getResources().getString(R.string.action_uploadArea));
         UploadedPicturesFragment fragment = UploadedPicturesFragment.newInstance(board);
         getSupportFragmentManager()
                 .beginTransaction()

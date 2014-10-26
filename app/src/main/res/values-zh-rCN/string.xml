@@ -3,12 +3,13 @@
 
     <string name="app_name">饮水思源</string>
     <string name="action_settings">设置</string>
-    <string name="action_new_topic">发表新帖子</string>
+    <string name="action_newTopic">发表新帖子</string>
     <string name="action_send">发表</string>
     <string name="action_upload">上传图片</string>
-    <string name="action_upload_area">图片上载区</string>
+    <string name="action_uploadArea">图片上载区</string>
     <string name="action_favorite">收藏该板块</string>
     <string name="action_reply">回复</string>
+    <string name="action_saveImage">保存图片</string>
 
     <string-array name="tab_titles">
         <item>今日十大</item>
@@ -17,10 +18,15 @@
     </string-array>
 
     <!-- Preferences -->
+    <string name="group_account">账号</string>
+    <string name="group_general">常规</string>
     <string name="title_username">用户名</string>
     <string name="title_password">密码</string>
+    <string name="title_signature">客户端尾巴</string>
     <string name="summary_username">请输入用户名</string>
     <string name="summary_password">请输入密码</string>
+    <string name="summary_signature">设置发布帖子时自动插入的尾巴</string>
+    <string name="default_signature">--- 来自安卓客户端</string>
     <string name="info_login_successfully">登录成功</string>
     <string name="error_wrong_password">用户名或密码错误</string>
 
@@ -33,5 +39,9 @@
     <string name="hint_topicContent">正文</string>
     <string name="info_post_successfully">发布成功！</string>
     <string name="error_post">发布失败！</string>
+
+    <!-- ImageViewFragment -->
+    <string name="info_imageSaved">已保存</string>
+    <string name="error_imageFailed">保存失败</string>
 
 </resources>
