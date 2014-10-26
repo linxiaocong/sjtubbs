@@ -1,10 +1,9 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,9 @@ import android.widget.ImageView;
 import java.io.File;
 
 import io.github.linxiaocong.sjtubbs.R;
+import io.github.linxiaocong.sjtubbs.utilities.FileDownloader;
 import io.github.linxiaocong.sjtubbs.utilities.Misc;
+import io.github.linxiaocong.sjtubbs.utilities.OnImageDownloadedListener;
 
 /**
  * Created by linxiaocong on 2014/10/25.
@@ -23,7 +24,8 @@ public class ImageViewFragment extends Fragment {
 
     public static final String EXTRA_SOURCE = "image_source";
 
-    private String mSource;
+    private String mPictureUrl;
+    private FileDownloader<ImageView> mFileDownloader;
 
     public static ImageViewFragment newInstance(String filename) {
         ImageViewFragment fragment = new ImageViewFragment();
@@ -36,14 +38,25 @@ public class ImageViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSource = getArguments().getString(EXTRA_SOURCE);
+        mPictureUrl = getArguments().getString(EXTRA_SOURCE);
+        mFileDownloader = new FileDownloader<ImageView>(getActivity(), new Handler());
+        mFileDownloader.setOnFileDownloadedListener(
+                new OnImageDownloadedListener(getActivity(), Misc.getScreenWidth(getActivity())));
+        mFileDownloader.start();
+        mFileDownloader.getLooper();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mFileDownloader.quit();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image_view, container, false);
         ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-        String filename = mSource.substring(mSource.lastIndexOf('/') + 1);
+        String filename = mPictureUrl.substring(mPictureUrl.lastIndexOf('/') + 1);
         File f = new File(getActivity().getCacheDir(), filename);
         if (f.exists()) {
             Bitmap bitmap = Misc.getScaledBitmapFromFile(getActivity(), f,
@@ -51,35 +64,20 @@ public class ImageViewFragment extends Fragment {
             Drawable drawable = Misc.getDrawableFromBitmap(getActivity(), bitmap);
             imageView.setImageDrawable(drawable);
         } else {
-            (new FetchPictureTask(getActivity(), imageView)).execute(mSource);
+            mFileDownloader.queueFile(imageView, mPictureUrl);
         }
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
         return view;
     }
 
-    private class FetchPictureTask extends AsyncTask<String, Void, Drawable> {
-
-        private ImageView mImageView;
-        private Context mContext;
-
-        public FetchPictureTask(Context context, ImageView imageView) {
-            mImageView = imageView;
-            mContext = context;
-        }
-
-        @Override
-        protected Drawable doInBackground(String... params) {
-            String source = params[0];
-            String filename = mSource.substring(mSource.lastIndexOf('/') + 1);
-            File f = new File(mContext.getCacheDir(), filename);
-            Misc.savedToFile(source, f);
-            Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f,
-                    Misc.getScreenWidth(mContext));
-            return Misc.getDrawableFromBitmap(mContext, bitmap);
-        }
-
-        @Override
-        protected void onPostExecute(Drawable result) {
-            mImageView.setImageDrawable(result);
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mFileDownloader.clearQueue();
     }
 }

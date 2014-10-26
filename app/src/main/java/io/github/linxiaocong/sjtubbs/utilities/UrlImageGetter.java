@@ -17,27 +17,23 @@ public class UrlImageGetter implements Html.ImageGetter {
     private Context mContext;
     private TextView mTextView;
 
-    private static int sScreenWidth = 0;
-
     public UrlImageGetter(Context c, TextView textView) {
         mContext = c;
         mTextView = textView;
-        if (sScreenWidth == 0) {
-            sScreenWidth = Misc.getScreenWidth(mContext);
-        }
     }
 
     @Override
-    public Drawable getDrawable(String source) {
+    public Drawable getDrawable(String url) {
         UrlDrawable urlDrawable = new UrlDrawable();
-        String filename = source.substring(source.lastIndexOf('/') + 1);
+        String filename = url.substring(url.lastIndexOf('/') + 1);
         File f = new File(mContext.getCacheDir(), filename);
         if (f.exists()) {
-            Log.d(tag, "image exists in cache dir: " + source);
-            Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f, sScreenWidth / 2);
+            Log.d(tag, "image exists in cache dir: " + filename);
+            Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f,
+                    OnImageDownloadedListener.BITMAP_WIDTH_THUMBNAIL);
             return Misc.getDrawableFromBitmap(mContext, bitmap);
         } else {
-            (new FetchImageTask(urlDrawable)).execute(source);
+            (new FetchImageTask(urlDrawable)).execute(url);
         }
         return urlDrawable;
     }
@@ -56,7 +52,8 @@ public class UrlImageGetter implements Html.ImageGetter {
             String filename = source.substring(source.lastIndexOf('/') + 1);
             File f = new File(mContext.getCacheDir(), filename);
             if (Misc.savedToFile(params[0], f)) {
-                Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f, sScreenWidth / 2);
+                Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f,
+                        OnImageDownloadedListener.BITMAP_WIDTH_THUMBNAIL);
                 return Misc.getDrawableFromBitmap(mContext, bitmap);
             }
             return null;

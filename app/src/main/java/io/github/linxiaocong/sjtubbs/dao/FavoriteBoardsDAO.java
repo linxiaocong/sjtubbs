@@ -28,8 +28,7 @@ public class FavoriteBoardsDAO {
         mContext = context;
     }
 
-    public ArrayList<Board> getFavoriteBoards() {
-        ArrayList<Board> results = new ArrayList<Board>();
+    public void getFavoriteBoards(ArrayList<Board> results) {
         BufferedReader reader = null;
         try {
             InputStream in = mContext.openFileInput(JSON_FAVORITE_FILENAME);
@@ -47,7 +46,6 @@ public class FavoriteBoardsDAO {
         } catch (Exception err) {
             err.printStackTrace();
         }
-        return results;
     }
 
     public synchronized void saveFavoriteBoards(ArrayList<Board> boards) {

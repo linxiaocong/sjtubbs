@@ -61,6 +61,11 @@ public class ReplyListFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.swipe_list, container, false);
 
@@ -132,6 +137,9 @@ public class ReplyListFragment extends Fragment {
     }
 
     private void setupAdapter() {
+        if (getActivity() == null) {
+            return;
+        }
         if (mReplyList != null)
             mListView.setAdapter(new ReplyListAdapter(mReplyList));
         else
@@ -163,6 +171,9 @@ public class ReplyListFragment extends Fragment {
         protected void onPostExecute(String result) {
             mIsLoading = false;
             mNextUrl = result;
+            if (getActivity() == null) {
+                return;
+            }
             if (mListView.getAdapter() == null) {
                 setupAdapter();
             } else {

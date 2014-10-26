@@ -55,7 +55,8 @@ public class TopicListFragment extends Fragment {
         mBoard = (Board) getArguments().getSerializable(EXTRA_BOARD);
         getActivity().setTitle(mBoard.getName());
         setHasOptionsMenu(true);
-        ArrayList<Board> favoriteBoards = (new FavoriteBoardsDAO(getActivity())).getFavoriteBoards();
+        ArrayList<Board> favoriteBoards = new ArrayList<Board>();
+        (new FavoriteBoardsDAO(getActivity())).getFavoriteBoards(favoriteBoards);
         if (favoriteBoards.indexOf(mBoard) >= 0) {
             mIsFavorite = true;
         }
@@ -133,7 +134,8 @@ public class TopicListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 FavoriteBoardsDAO favoriteBoardsDAO = new FavoriteBoardsDAO(getActivity());
-                ArrayList<Board> favoriteBoards = favoriteBoardsDAO.getFavoriteBoards();
+                ArrayList<Board> favoriteBoards = new ArrayList<Board>();
+                favoriteBoardsDAO.getFavoriteBoards(favoriteBoards);
                 if (mIsFavorite) {
                     item.setIcon(R.drawable.ic_action_important);
                     favoriteBoards.remove(mBoard);
@@ -159,6 +161,9 @@ public class TopicListFragment extends Fragment {
     }
 
     private void setupAdapter() {
+        if (getActivity() == null) {
+            return;
+        }
         if (mTopicList != null) {
             TopicListAdapter adapter = new TopicListAdapter(mTopicList);
             mListView.setAdapter(adapter);
@@ -188,6 +193,9 @@ public class TopicListFragment extends Fragment {
             mIsLoading = false;
             if (result != null) {
                 mNextUrl = result;
+                if (getActivity() == null) {
+                    return;
+                }
                 if (mListView.getAdapter() == null) {
                     setupAdapter();
                 } else {

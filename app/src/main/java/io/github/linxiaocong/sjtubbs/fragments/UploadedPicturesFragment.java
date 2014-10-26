@@ -1,11 +1,11 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -26,7 +26,9 @@ import io.github.linxiaocong.sjtubbs.activities.ImagePagerActivity;
 import io.github.linxiaocong.sjtubbs.models.Board;
 import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 import io.github.linxiaocong.sjtubbs.utilities.BitmapCache;
+import io.github.linxiaocong.sjtubbs.utilities.FileDownloader;
 import io.github.linxiaocong.sjtubbs.utilities.Misc;
+import io.github.linxiaocong.sjtubbs.utilities.OnImageDownloadedListener;
 
 /**
  * Created by linxiaocong on 2014/10/23.
@@ -43,6 +45,7 @@ public class UploadedPicturesFragment extends Fragment {
     private Board mBoard;
     private String mNextUrl;
     private boolean mIsFetching = false;
+    private FileDownloader<ImageView> mFileDownloader;
 
     public static UploadedPicturesFragment newInstance(Board board) {
         UploadedPicturesFragment fragment = new UploadedPicturesFragment();
@@ -55,7 +58,19 @@ public class UploadedPicturesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         mBoard = (Board)getArguments().getSerializable(EXTRA_BOARD);
+        mFileDownloader = new FileDownloader<ImageView>(getActivity(), new Handler());
+        mFileDownloader.setOnFileDownloadedListener(
+                new OnImageDownloadedListener(getActivity(), OnImageDownloadedListener.BITMAP_WIDTH_THUMBNAIL));
+        mFileDownloader.start();
+        mFileDownloader.getLooper();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mFileDownloader.quit();
     }
 
     @Override
@@ -113,6 +128,12 @@ public class UploadedPicturesFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mFileDownloader.clearQueue();
+    }
+
     private void setupAdapter() {
         if (getActivity() == null || mUploadedPictures == null)
             return;
@@ -145,36 +166,6 @@ public class UploadedPicturesFragment extends Fragment {
         }
     }
 
-    private class FetchPictureTask extends AsyncTask<String, Void, Drawable> {
-
-        private ImageView mImageView;
-        private Context mContext;
-
-        public FetchPictureTask(Context context, ImageView imageView) {
-            mImageView = imageView;
-            mContext = context;
-        }
-
-        @Override
-        protected Drawable doInBackground(String... params) {
-            String source = params[0];
-            String filename = source.substring(source.lastIndexOf('/') + 1);
-            File f = new File(mContext.getCacheDir(), filename);
-            Misc.savedToFile(source, f);
-            Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, f, 320);
-            if (bitmap != null) {
-                BitmapCache.getInstance().put(filename + "_thumbnail", bitmap);
-                return Misc.getDrawableFromBitmap(mContext, bitmap);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Drawable result) {
-            mImageView.setImageDrawable(result);
-        }
-    }
-
     private class UploadedPicturesAdapter extends ArrayAdapter<String> {
 
         public UploadedPicturesAdapter() {
@@ -193,13 +184,13 @@ public class UploadedPicturesFragment extends Fragment {
             File f = new File(getActivity().getCacheDir(), filename);
             Bitmap bitmap;
             boolean bitmapFound = false;
-            if ((bitmap = BitmapCache.getInstance().get(filename + "_thumbnail")) == null) {
+            if ((bitmap = BitmapCache.getInstance().get(OnImageDownloadedListener.THUMBNAIL_PREFIX + filename)) == null) {
                 if (f.exists()) {
                     bitmap = Misc.getScaledBitmapFromFile(getActivity(), f, 320);
                     if (bitmap != null) {
                         bitmapFound = true;
                         Log.d(tag, "put bitmap thumbnail into cache: " + filename);
-                        BitmapCache.getInstance().put(filename + "_thumbnail", bitmap);
+                        BitmapCache.getInstance().put(OnImageDownloadedListener.THUMBNAIL_PREFIX + filename, bitmap);
                     }
                 }
             } else {
@@ -207,7 +198,7 @@ public class UploadedPicturesFragment extends Fragment {
                 bitmapFound = true;
             }
             if (!bitmapFound) {
-                (new FetchPictureTask(getActivity(), imageView)).execute(pictureUrl);
+                mFileDownloader.queueFile(imageView, pictureUrl);
             } else {
                 Drawable drawable = Misc.getDrawableFromBitmap(getActivity(), bitmap);
                 imageView.setImageDrawable(drawable);
