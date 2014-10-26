@@ -173,9 +173,16 @@ public class BBSUtils {
                         String replyId = firstLine.substring(0, index);
                         String replyTime = firstLine.substring(index + 1);
                         index = replyHTML.indexOf('\n');
-                        String replyTitle = replyHTML.substring(0, index);
-                        String replyContent = replyHTML.substring(index + 1)
-                                .replace("\n", "<br />");
+                        String replyTitle;
+                        String replyContent;
+                        if (index != -1) {
+                            replyTitle = replyHTML.substring(0, index);
+                            replyContent = replyHTML.substring(index + 1)
+                                    .replace("\n", "<br />");
+                        } else {
+                            replyTitle = replyHTML;
+                            replyContent = "";
+                        }
                         replyList.add(new Reply(replyId, replyTime, replyTitle,
                                 replyContent, replyUrl));
                     } catch (Exception e) {
