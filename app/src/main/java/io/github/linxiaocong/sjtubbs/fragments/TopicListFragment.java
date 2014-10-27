@@ -1,8 +1,10 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -153,6 +156,14 @@ public class TopicListFragment extends Fragment {
                 startActivity(intent);
                 return true;
             case R.id.action_new_topic:
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String username = prefs.getString("username", "");
+                String password = prefs.getString("password", "");
+                if (username.equals("") || password.equals("")) {
+                    Toast.makeText(getActivity(), R.string.error_login_needed, Toast.LENGTH_SHORT)
+                            .show();
+                    return true;
+                }
                 intent = new Intent(getActivity(), NewPostActivity.class);
                 intent.putExtra(NewPostFragment.EXTRA_BOARD_NAME, mBoard.getName());
                 intent.putExtra(NewPostFragment.EXTRA_IS_REPLY, false);

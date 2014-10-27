@@ -29,6 +29,7 @@
     <string name="default_signature">--- 来自安卓客户端</string>
     <string name="info_login_successfully">登录成功</string>
     <string name="error_wrong_password">用户名或密码错误</string>
+    <string name="error_login_needed">请先登录！</string>
 
     <!-- SectionListFragment -->
     <string name="sub_boards_dialog_title">请选择版面</string>

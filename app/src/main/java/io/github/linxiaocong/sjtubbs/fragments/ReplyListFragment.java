@@ -2,8 +2,10 @@ package io.github.linxiaocong.sjtubbs.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
@@ -19,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -154,6 +157,14 @@ public class ReplyListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_reply:
                 Log.d(tag, "Reply for position: " + position);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String username = prefs.getString("username", "");
+                String password = prefs.getString("password", "");
+                if (username.equals("") || password.equals("")) {
+                    Toast.makeText(getActivity(), R.string.error_login_needed, Toast.LENGTH_SHORT)
+                            .show();
+                    return true;
+                }
                 Reply reply = mReplyList.get(position);
                 Intent intent = new Intent(getActivity(), NewPostActivity.class);
                 intent.putExtra(NewPostFragment.EXTRA_BOARD_NAME, mTopic.getBoard());

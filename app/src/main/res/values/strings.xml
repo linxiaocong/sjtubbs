@@ -20,9 +20,6 @@
     <!-- Preferences -->
     <string name="group_account">Account</string>
     <string name="group_general">General</string>
-    <string name="key_username">username</string>
-    <string name="key_password">password</string>
-    <string name="key_signature">signature</string>
     <string name="title_username">Username</string>
     <string name="title_password">Password</string>
     <string name="title_signature">Post Signature</string>
@@ -32,6 +29,7 @@
     <string name="default_signature">--- From Android Client</string>
     <string name="info_login_successfully">Login successfully</string>
     <string name="error_wrong_password">Wrong username or password!</string>
+    <string name="error_login_needed">Please input your username and password in settings!</string>
 
     <!-- SectionListFragment -->
     <string name="sub_boards_dialog_title">Select Board</string>

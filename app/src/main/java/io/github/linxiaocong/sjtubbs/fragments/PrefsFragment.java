@@ -32,28 +32,29 @@ public class PrefsFragment extends PreferenceFragment {
         mSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-                String username = sharedPreferences.getString(getResources().getString(R.string.key_username),
-                        "");
-                String password = sharedPreferences.getString(getResources().getString(R.string.key_password),
-                        "");
+                String username = sharedPreferences.getString("username", "");
+                String password = sharedPreferences.getString("password", "");
                 Log.d(tag, "Username: " + username);
-                AsyncTask<String, Void, Boolean> loginTask = new AsyncTask<String, Void, Boolean>() {
-                    @Override
-                    protected Boolean doInBackground(String... params) {
-                        return BBSUtils.getInstance().login(params[0], params[1]);
-                    }
-                    @Override
-                    protected void onPostExecute(Boolean result) {
-                        if (result == Boolean.TRUE) {
-                            Toast.makeText(getActivity(), R.string.info_login_successfully,
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), R.string.error_wrong_password,
-                                    Toast.LENGTH_SHORT).show();
+                if (!username.equals("") && !password.equals("")) {
+                    AsyncTask<String, Void, Boolean> loginTask = new AsyncTask<String, Void, Boolean>() {
+                        @Override
+                        protected Boolean doInBackground(String... params) {
+                            return BBSUtils.getInstance().login(params[0], params[1]);
                         }
-                    }
-                };
-                loginTask.execute(username, password);
+
+                        @Override
+                        protected void onPostExecute(Boolean result) {
+                            if (result == Boolean.TRUE) {
+                                Toast.makeText(getActivity(), R.string.info_login_successfully,
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), R.string.error_wrong_password,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    };
+                    loginTask.execute(username, password);
+                }
             }
         });
     }

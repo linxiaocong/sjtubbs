@@ -72,11 +72,9 @@ public class NewPostFragment extends Fragment {
         setHasOptionsMenu(true);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUsername = prefs.getString(getResources().getString(R.string.key_username),
-                "");
-        mPassword = prefs.getString(getResources().getString(R.string.key_password),
-                "");
-        mSignature = prefs.getString(getResources().getString(R.string.key_signature), "");
+        mUsername = prefs.getString("username", "");
+        mPassword = prefs.getString("password", "");
+        mSignature = prefs.getString("signature", "");
 
         Log.d(tag, "Login User is: " + mUsername);
 
