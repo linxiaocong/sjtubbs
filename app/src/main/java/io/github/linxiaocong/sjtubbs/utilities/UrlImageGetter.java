@@ -61,6 +61,9 @@ public class UrlImageGetter implements Html.ImageGetter {
 
         @Override
         protected void onPostExecute(Drawable result) {
+            if (result == null) {
+                return;
+            }
             mUrlDrawable.setBounds(0, 0, result.getIntrinsicWidth(), result.getIntrinsicHeight());
             mUrlDrawable.setDrawable(result);
             TextView textView = UrlImageGetter.this.mTextView;
