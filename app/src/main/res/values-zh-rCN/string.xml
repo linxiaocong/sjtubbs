@@ -3,6 +3,7 @@
 
     <string name="app_name">饮水思源</string>
     <string name="action_settings">设置</string>
+    <string name="action_contact_me">联系开发者</string>
     <string name="action_newTopic">发表新帖子</string>
     <string name="action_send">发表</string>
     <string name="action_upload">上传图片</string>

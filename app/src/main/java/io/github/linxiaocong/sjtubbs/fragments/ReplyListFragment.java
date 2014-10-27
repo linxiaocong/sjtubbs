@@ -94,6 +94,7 @@ public class ReplyListFragment extends Fragment {
         });
 
         mListView = (ListView) view.findViewById(R.id.list_view);
+        mListView.setDivider(null);
 
         mListView.setOnScrollListener(new OnScrollListener() {
             @Override

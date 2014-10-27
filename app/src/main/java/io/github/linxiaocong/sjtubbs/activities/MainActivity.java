@@ -87,13 +87,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Intent intent;
         switch (id) {
             case R.id.action_settings:
-                Intent intent = new Intent(this, PrefsActivity.class);
+                intent = new Intent(this, PrefsActivity.class);
                 startActivity(intent);
-                break;
+                return true;
+            case R.id.action_contact_me:
+                intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"linxiaocong@gmail.com"});
+                intent.putExtra(Intent.EXTRA_SUBJECT, "[SJTU BBS]");
+                startActivity(Intent.createChooser(intent, getString(R.string.action_contact_me)));
+                return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
