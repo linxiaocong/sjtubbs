@@ -178,7 +178,7 @@ public class UploadedPicturesFragment extends Fragment {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.grid_item_picture, parent, false);
             }
-            ImageView imageView = (ImageView)convertView.findViewById(R.id.imageView);
+            final ImageView imageView = (ImageView)convertView.findViewById(R.id.imageView);
             String pictureUrl = getItem(position);
             String filename = pictureUrl.substring(pictureUrl.lastIndexOf('/') + 1);
             File f = new File(getActivity().getCacheDir(), filename);
@@ -201,8 +201,16 @@ public class UploadedPicturesFragment extends Fragment {
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.downloading));
                 mFileDownloader.queueFile(imageView, pictureUrl);
             } else {
-                Drawable drawable = Misc.getDrawableFromBitmap(getActivity(), bitmap);
-                imageView.setImageDrawable(drawable);
+                (new AsyncTask<Bitmap, Void, Drawable>() {
+                    @Override
+                    protected Drawable doInBackground(Bitmap... params) {
+                        return  Misc.getDrawableFromBitmap(getActivity(), params[0]);
+                    }
+                    @Override
+                    protected void onPostExecute(Drawable drawable) {
+                        imageView.setImageDrawable(drawable);
+                    }
+                }).execute();
             }
             return convertView;
         }
