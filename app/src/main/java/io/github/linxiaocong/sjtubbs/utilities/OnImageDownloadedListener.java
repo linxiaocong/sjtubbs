@@ -24,18 +24,16 @@ public class OnImageDownloadedListener implements FileDownloader.OnFileDownloade
     }
 
     @Override
-    public void onImageDownloaded(ImageView imageView, File file) {
+    public void onImageDownloaded(ImageView imageView, String filename) {
+        File file = new File(mContext.getCacheDir(), filename);
         Bitmap bitmap = Misc.getScaledBitmapFromFile(mContext, file, mScaledWidth);
         if (bitmap != null) {
-            /*
             if (mScaledWidth == BITMAP_WIDTH_THUMBNAIL) {
                 BitmapCache.getInstance().put(THUMBNAIL_PREFIX + file.getName(), bitmap);
             } else {
                 BitmapCache.getInstance().put(file.getName(), bitmap);
             }
-            */
-            Drawable drawable = Misc.getDrawableFromBitmap(mContext, bitmap);
-            imageView.setImageDrawable(drawable);
+            imageView.setImageBitmap(bitmap);
         }
     }
 }

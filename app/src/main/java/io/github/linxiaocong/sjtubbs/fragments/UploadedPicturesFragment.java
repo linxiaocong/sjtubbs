@@ -198,6 +198,7 @@ public class UploadedPicturesFragment extends Fragment {
                 bitmapFound = true;
             }
             if (!bitmapFound) {
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.downloading));
                 mFileDownloader.queueFile(imageView, pictureUrl);
             } else {
                 Drawable drawable = Misc.getDrawableFromBitmap(getActivity(), bitmap);

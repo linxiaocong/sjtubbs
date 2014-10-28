@@ -20,7 +20,7 @@ public class FileDownloader<Token> extends HandlerThread {
     private static final int MESSAGE_DOWNLOAD = 0;
 
     public interface OnFileDownloadedListener<Token> {
-        void onImageDownloaded(Token token, File file);
+        void onImageDownloaded(Token token, String filename);
     }
 
     private Handler mHandler;
@@ -80,7 +80,7 @@ public class FileDownloader<Token> extends HandlerThread {
         try {
             final String url = mRequestMap.get(token);
             final String filename = url.substring(url.lastIndexOf('/') + 1);
-            final File file = new File(mContext.getCacheDir(), filename);
+            File file = new File(mContext.getCacheDir(), filename);
             Misc.savedToFile(url, file);
             mResponseHandler.post(new Runnable() {
                 @Override
@@ -88,7 +88,7 @@ public class FileDownloader<Token> extends HandlerThread {
                     if (mRequestMap.get(token) != url)
                         return;
                     mRequestMap.remove(token);
-                    mOnFileDownloadedListener.onImageDownloaded(token, file);
+                    mOnFileDownloadedListener.onImageDownloaded(token, filename);
                 }
             });
         } catch (Exception e) {
