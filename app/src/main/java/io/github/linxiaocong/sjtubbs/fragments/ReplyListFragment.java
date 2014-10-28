@@ -242,6 +242,12 @@ public class ReplyListFragment extends Fragment {
 
             Reply reply = getItem(position);
 
+            TextView textViewTitle = (TextView) convertView
+                    .findViewById(R.id.textview_title);
+            String title = position == 0 ?
+                    reply.getTitle() : "#" + position + " " + reply.getTitle();
+            textViewTitle.setText(title);
+
             TextView textViewAuthor = (TextView) convertView
                     .findViewById(R.id.textview_author);
             textViewAuthor.setText(reply.getUser());
@@ -249,10 +255,6 @@ public class ReplyListFragment extends Fragment {
             TextView textViewTime = (TextView) convertView
                     .findViewById(R.id.textview_time);
             textViewTime.setText(reply.getTime());
-
-            TextView textViewTitle = (TextView) convertView
-                    .findViewById(R.id.textview_title);
-            textViewTitle.setText(reply.getTitle());
 
             TextView textViewContent = (TextView) convertView
                     .findViewById(R.id.textview_content);

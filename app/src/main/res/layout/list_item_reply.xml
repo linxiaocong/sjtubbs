@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp">
 
     <TextView
         android:id="@+id/textview_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:singleLine="true"
         android:textColor="@color/material_teal_700"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textview_author"
@@ -21,24 +23,25 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/textview_title"
         android:layout_marginTop="8dp"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textview_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/textview_title"
-        android:layout_marginTop="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/textview_author"
+        android:layout_marginTop="2dp"
         android:textColor="@color/material_pink_A200"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/textview_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textview_author"
-        android:layout_marginTop="8dp"
-        android:textSize="16sp"/>
+        android:layout_below="@id/textview_time"
+        android:layout_marginTop="2dp"
+        android:textSize="16sp" />
 
 </RelativeLayout>
