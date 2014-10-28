@@ -188,7 +188,7 @@ public class SectionListFragment extends Fragment {
                         R.layout.list_item_board, viewGroup, false);
             }
             Board board = mSections.get(i).getBoards().get(i2);
-            ((TextView) view).setText(board.getName() + " " + board.getDesc());
+            ((TextView) view).setText(board.getDesc() + " " + board.getName());
             return view;
         }
 

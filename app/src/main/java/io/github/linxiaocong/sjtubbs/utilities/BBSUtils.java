@@ -126,7 +126,14 @@ public class BBSUtils {
                 Elements tdElements = trElements.get(i).select("td");
                 String topicAuthor = tdElements.get(2).select("a").first().text();
                 Element titleElement = tdElements.get(4).select("a").first();
-                String topicTitle = titleElement.text().trim();
+                String topicTitle = titleElement.text();
+                // remove the extra blanks in the front. the Trim method does not
+                // work here
+                int j = 0;
+                while (topicTitle.charAt(j) == (char)160) {
+                    ++j;
+                }
+                topicTitle = topicTitle.substring(j);
                 String topicUrl = BBS_INDEX + "/" + titleElement.attr("href").replace("bbstcon", "bbswaptcon");
                 String topicId = null;
                 if (topicUrl.endsWith("html")) {

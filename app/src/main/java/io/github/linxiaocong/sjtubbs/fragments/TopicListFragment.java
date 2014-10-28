@@ -238,6 +238,9 @@ public class TopicListFragment extends Fragment {
             TextView textviewTitle = (TextView) convertView
                     .findViewById(R.id.textview_title);
             textviewTitle.setText(topic.getTitle());
+            TextView textviewAuthor = (TextView)convertView
+                    .findViewById(R.id.textview_author);
+            textviewAuthor.setText(topic.getAuthor());
             return convertView;
         }
     }

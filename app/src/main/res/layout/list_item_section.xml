@@ -3,10 +3,10 @@
     android:id="@+id/textview_section"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="8dp"
+    android:paddingBottom="10dp"
     android:paddingLeft="48dp"
     android:paddingRight="48dp"
-    android:paddingTop="8dp"
+    android:paddingTop="10dp"
     android:singleLine="true"
     android:textSize="18sp">
 

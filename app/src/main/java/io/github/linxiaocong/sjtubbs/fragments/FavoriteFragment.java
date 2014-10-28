@@ -45,8 +45,8 @@ public class FavoriteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.swipe_list, container, false);
-        mListView = (ListView)view.findViewById(R.id.list_view);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_container);
+        mListView = (ListView) view.findViewById(R.id.list_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -83,7 +83,7 @@ public class FavoriteFragment extends Fragment {
                         .getLayoutInflater().inflate(R.layout.list_item_board, parent, false);
             }
             Board board = getItem(position);
-            ((TextView)convertView).setText(board.getName() + " " + board.getDesc());
+            ((TextView) convertView).setText(board.getDesc() + " " + board.getName());
             return convertView;
         }
     }

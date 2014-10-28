@@ -3,15 +3,16 @@
     <color name="material_blue_500">#5677fc</color>
     <color name="material_blue_700">#455ede</color>
     <color name="material_blue_A200">#6889ff</color>
-    <color name="material_blue_grey_500">#607d8b</color>
+    <color name="material_blueGrey_500">#607d8b</color>
+    <color name="material_blueGrey_700">#455a64</color>
+    <color name="material_blueGrey_100">#cfd8dc</color>
     <color name="material_green_A200">#5af158</color>
-    <color name="material_teal_100">#b2dfdb</color>
     <color name="material_teal_500">#009688</color>
     <color name="material_teal_700">#00796b</color>
     <color name="material_teal_A200">#64ffda</color>
-    <color name="material_indigo_100">#c5cae9</color>
     <color name="material_indigo_500">#3f51b5</color>
     <color name="material_indigo_700">#303f9f</color>
+    <color name="material_indigo_A200">#536dfe</color>
     <color name="material_pink_A200">#ff4081</color>
     <color name="material_cyan_500">#00bcd4</color>
     <color name="material_cyan_700">#0097a7</color>
@@ -19,4 +20,7 @@
     <color name="material_lightBlue_500">#03a9f4</color>
     <color name="material_lightBlue_700">#0277bd</color>
     <color name="material_lightBlue_A200">#40c4ff</color>
+    <color name="material_red_500">#e51c23</color>
+    <color name="material_red_700">#d01716</color>
+    <color name="material_red_A200">#ff5177</color>
 </resources>

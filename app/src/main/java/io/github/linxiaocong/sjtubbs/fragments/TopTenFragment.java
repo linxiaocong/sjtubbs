@@ -121,12 +121,19 @@ public class TopTenFragment extends Fragment {
                         R.layout.list_item_topic, parent, false);
             }
             Topic topic = getItem(position);
-            TextView textviewBoard = (TextView) convertView
-                    .findViewById(R.id.textview_board);
-            textviewBoard.setText("[ " + topic.getBoard() + " ]");
+
             TextView textviewTitle = (TextView) convertView
                     .findViewById(R.id.textview_title);
             textviewTitle.setText(topic.getTitle());
+
+            TextView textviewBoard = (TextView) convertView
+                    .findViewById(R.id.textview_board);
+            textviewBoard.setText("[ " + topic.getBoard() + " ]");
+
+            TextView textviewAuthor = (TextView)convertView
+                    .findViewById(R.id.textview_author);
+            textviewAuthor.setText(topic.getAuthor());
+
             return convertView;
         }
     }
