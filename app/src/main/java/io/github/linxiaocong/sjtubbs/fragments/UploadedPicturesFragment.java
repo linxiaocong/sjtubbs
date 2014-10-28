@@ -2,7 +2,6 @@ package io.github.linxiaocong.sjtubbs.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -178,7 +177,7 @@ public class UploadedPicturesFragment extends Fragment {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.grid_item_picture, parent, false);
             }
-            final ImageView imageView = (ImageView)convertView.findViewById(R.id.imageView);
+            ImageView imageView = (ImageView)convertView.findViewById(R.id.imageView);
             String pictureUrl = getItem(position);
             String filename = pictureUrl.substring(pictureUrl.lastIndexOf('/') + 1);
             File f = new File(getActivity().getCacheDir(), filename);
@@ -201,16 +200,7 @@ public class UploadedPicturesFragment extends Fragment {
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.downloading));
                 mFileDownloader.queueFile(imageView, pictureUrl);
             } else {
-                (new AsyncTask<Bitmap, Void, Drawable>() {
-                    @Override
-                    protected Drawable doInBackground(Bitmap... params) {
-                        return  Misc.getDrawableFromBitmap(getActivity(), params[0]);
-                    }
-                    @Override
-                    protected void onPostExecute(Drawable drawable) {
-                        imageView.setImageDrawable(drawable);
-                    }
-                }).execute();
+                imageView.setImageBitmap(bitmap);
             }
             return convertView;
         }
