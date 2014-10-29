@@ -10,7 +10,8 @@
     <string name="action_uploadArea">图片上载区</string>
     <string name="action_favorite">收藏该板块</string>
     <string name="action_reply">回复</string>
-    <string name="action_saveImage">保存图片</string>
+    <string name="action_saveImage">保存</string>
+    <string name="action_share">分享</string>
 
     <string-array name="tab_titles">
         <item>今日十大</item>

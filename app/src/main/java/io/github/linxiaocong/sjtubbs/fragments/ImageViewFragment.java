@@ -1,8 +1,10 @@
 package io.github.linxiaocong.sjtubbs.fragments;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -53,6 +55,8 @@ public class ImageViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
         mPictureUrl = getArguments().getString(EXTRA_PICTURE_URL);
         mFilename = mPictureUrl.substring(mPictureUrl.lastIndexOf('/') + 1);
         mFileDownloader = new FileDownloader<ImageView>(getActivity(), new Handler());
@@ -60,9 +64,6 @@ public class ImageViewFragment extends Fragment {
                 new OnImageDownloadedListener(getActivity(), Misc.getScreenWidth(getActivity())));
         mFileDownloader.start();
         mFileDownloader.getLooper();
-        setRetainInstance(true);
-        setHasOptionsMenu(true);
-        getActivity().setTitle(mFilename);
     }
 
     @Override
@@ -79,7 +80,6 @@ public class ImageViewFragment extends Fragment {
         mAttacher = new PhotoViewAttacher(mImageView);
         mAttacher.setZoomable(true);
         mAttacher.setScaleType(ImageView.ScaleType.CENTER);
-
         File f = new File(getActivity().getCacheDir(), mFilename);
         if (f.exists()) {
             Bitmap bitmap = Misc.getScaledBitmapFromFile(getActivity(), f,
@@ -102,6 +102,22 @@ public class ImageViewFragment extends Fragment {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
+                return true;
+            case R.id.menu_item_share:
+                try {
+                    saveImage();
+                    File dir = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES), "SJTU BBS");
+                    File file = new File(dir.getAbsolutePath(), mFilename);
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                    startActivity(Intent.createChooser(intent,
+                            getResources().getString(R.string.action_share)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return true;
             case R.id.menu_item_saveImage:
                 try {

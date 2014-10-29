@@ -7,4 +7,9 @@
         android:icon="@drawable/ic_action_download"
         android:title="@string/action_saveImage"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_item_share"
+        android:icon="@drawable/ic_action_share"
+        android:title="@string/action_share"
+        app:showAsAction="always" />
 </menu>

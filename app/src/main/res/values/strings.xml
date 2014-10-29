@@ -11,6 +11,7 @@
     <string name="action_favorite">Mark as Favorite</string>
     <string name="action_reply">Reply</string>
     <string name="action_saveImage">Save Photo</string>
+    <string name="action_share">Share</string>
 
     <string-array name="tab_titles">
         <item>Top 10</item>

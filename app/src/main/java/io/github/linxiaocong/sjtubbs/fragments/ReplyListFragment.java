@@ -128,6 +128,7 @@ public class ReplyListFragment extends Fragment {
                     }
                     if (pictures.size() >= 1) {
                         Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                        intent.putExtra(ImagePagerActivity.EXTRA_TITLE, mTopic.getTitle());
                         intent.putExtra(ImagePagerActivity.EXTRA_PICTURES, pictures);
                         intent.putExtra(ImagePagerActivity.EXTRA_CURRENT_ITEM, 0);
                         startActivity(intent);

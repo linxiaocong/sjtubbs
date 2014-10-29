@@ -4,12 +4,9 @@ package io.github.linxiaocong.sjtubbs.activities;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Window;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 
@@ -23,8 +20,9 @@ import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 public class ImagePagerActivity extends ActionBarActivity {
 
     public static final String EXTRA_PICTURES = "extra_pictures";
-    public static final String EXTRA_CURRENT_ITEM = "extra_current_item";
-    public static final String EXTRA_NEXT_URL = "extra_next_url";
+    public static final String EXTRA_CURRENT_ITEM = "extra_currentItem";
+    public static final String EXTRA_NEXT_URL = "extra_nextUrl";
+    public static final String EXTRA_TITLE = "extra_title";
 
     private ViewPager mViewPager;
     private FragmentStatePagerAdapter mFragmentStatePagerAdapter;
@@ -48,6 +46,7 @@ public class ImagePagerActivity extends ActionBarActivity {
         mPictures = (ArrayList<String>)getIntent().getSerializableExtra(EXTRA_PICTURES);
         mCurrentItem = getIntent().getIntExtra(EXTRA_CURRENT_ITEM, 0);
         mNextUrl = getIntent().getStringExtra(EXTRA_NEXT_URL);
+        setTitle(getIntent().getStringExtra(EXTRA_TITLE));
 
         mViewPager = new ViewPager(this);
         mViewPager.setId(R.id.viewPager);

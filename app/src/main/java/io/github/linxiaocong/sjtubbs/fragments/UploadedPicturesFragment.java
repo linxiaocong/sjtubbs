@@ -115,6 +115,8 @@ public class UploadedPicturesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                intent.putExtra(ImagePagerActivity.EXTRA_TITLE,
+                        mBoard.getName() + " " + getResources().getString(R.string.action_uploadArea));
                 intent.putExtra(ImagePagerActivity.EXTRA_PICTURES, mUploadedPictures);
                 intent.putExtra(ImagePagerActivity.EXTRA_CURRENT_ITEM, i);
                 intent.putExtra(ImagePagerActivity.EXTRA_NEXT_URL, mNextUrl);
