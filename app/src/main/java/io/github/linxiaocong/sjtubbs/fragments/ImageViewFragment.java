@@ -100,6 +100,9 @@ public class ImageViewFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
             case R.id.menu_item_saveImage:
                 try {
                     saveImage();
