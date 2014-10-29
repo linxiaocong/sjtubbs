@@ -31,9 +31,8 @@ dependencies {
     compile 'com.android.support:support-v4:+'
     compile 'com.android.support:support-v13:+'
     compile 'com.android.support:appcompat-v7:+'
-    compile 'com.android.support:cardview-v7:+'
-    compile 'com.android.support:recyclerview-v7:+'
     compile 'org.apache.httpcomponents:httpcore:4.3'
     compile 'org.apache.httpcomponents:httpclient:4.3.3'
     compile 'org.apache.httpcomponents:httpmime:4.3'
+    compile 'com.github.chrisbanes.photoview:library:+'
 }

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -19,7 +20,7 @@ import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 /**
  * Created by linxiaocong on 2014/10/25.
  */
-public class ImagePagerActivity extends FragmentActivity {
+public class ImagePagerActivity extends ActionBarActivity {
 
     public static final String EXTRA_PICTURES = "extra_pictures";
     public static final String EXTRA_CURRENT_ITEM = "extra_current_item";
@@ -36,9 +37,13 @@ public class ImagePagerActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        */
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mPictures = (ArrayList<String>)getIntent().getSerializableExtra(EXTRA_PICTURES);
         mCurrentItem = getIntent().getIntExtra(EXTRA_CURRENT_ITEM, 0);

@@ -8,8 +8,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import io.github.linxiaocong.sjtubbs.R;
 import io.github.linxiaocong.sjtubbs.utilities.FileDownloader;
 import io.github.linxiaocong.sjtubbs.utilities.Misc;
 import io.github.linxiaocong.sjtubbs.utilities.OnImageDownloadedListener;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by linxiaocong on 2014/10/25.
@@ -35,7 +37,10 @@ public class ImageViewFragment extends Fragment {
     public static final String EXTRA_PICTURE_URL = "extra_pictureUrl";
 
     private String mPictureUrl;
+    private String mFilename;
     private FileDownloader<ImageView> mFileDownloader;
+    private ImageView mImageView;
+    private PhotoViewAttacher mAttacher;
 
     public static ImageViewFragment newInstance(String pictureUrl) {
         ImageViewFragment fragment = new ImageViewFragment();
@@ -48,95 +53,98 @@ public class ImageViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         mPictureUrl = getArguments().getString(EXTRA_PICTURE_URL);
+        mFilename = mPictureUrl.substring(mPictureUrl.lastIndexOf('/') + 1);
         mFileDownloader = new FileDownloader<ImageView>(getActivity(), new Handler());
         mFileDownloader.setOnFileDownloadedListener(
                 new OnImageDownloadedListener(getActivity(), Misc.getScreenWidth(getActivity())));
         mFileDownloader.start();
         mFileDownloader.getLooper();
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
+        getActivity().setTitle(mFilename);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mFileDownloader.quit();
+        mAttacher.cleanup();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image_view, container, false);
-        ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
-        String filename = mPictureUrl.substring(mPictureUrl.lastIndexOf('/') + 1);
-        File f = new File(getActivity().getCacheDir(), filename);
+        mImageView = (ImageView) view.findViewById(R.id.iv_photo);
+        mAttacher = new PhotoViewAttacher(mImageView);
+        mAttacher.setZoomable(true);
+        mAttacher.setScaleType(ImageView.ScaleType.CENTER);
+
+        File f = new File(getActivity().getCacheDir(), mFilename);
         if (f.exists()) {
             Bitmap bitmap = Misc.getScaledBitmapFromFile(getActivity(), f,
                     Misc.getScreenWidth(getActivity()));
             Drawable drawable = Misc.getDrawableFromBitmap(getActivity(), bitmap);
-            imageView.setImageDrawable(drawable);
+            mImageView.setImageDrawable(drawable);
         } else {
-            mFileDownloader.queueFile(imageView, mPictureUrl);
+            mFileDownloader.queueFile(mImageView, mPictureUrl);
         }
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().onBackPressed();
-            }
-        });
-        registerForContextMenu(imageView);
         return view;
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        getActivity().getMenuInflater().inflate(R.menu.context_menu_imageview, menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_imageview, menu);
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_saveImage:
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    File dir = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES), "SJTU BBS");
-                    if (!dir.exists()) {
-                        dir.mkdir();
-                    }
-                    String filename = mPictureUrl.substring(mPictureUrl.lastIndexOf('/') + 1);
-                    File fileOriginal = new File(getActivity().getCacheDir(), filename);
-                    File fileNew = new File(dir.getAbsolutePath(), filename);
-                    try {
-                        InputStream inputStream = new FileInputStream(fileOriginal);
-                        OutputStream outputStream = new FileOutputStream(fileNew);
-                        byte[] buffer = new byte[1025];
-                        int len;
-                        while ((len = inputStream.read(buffer, 0, 1024)) != -1) {
-                            outputStream.write(buffer, 0, len);
-                        }
-                        inputStream.close();
-                        outputStream.close();
-                        ContentValues values = new ContentValues();
-                        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-                        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-                        values.put(MediaStore.MediaColumns.DATA, fileNew.getAbsolutePath());
-                        getActivity().getContentResolver()
-                                .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                        Toast.makeText(getActivity(), R.string.info_imageSaved,
-                                Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getActivity(), R.string.error_imageFailed,
-                                Toast.LENGTH_SHORT).show();
-                    }
+                try {
+                    saveImage();
+                    Toast.makeText(getActivity(), R.string.info_imageSaved,
+                            Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), R.string.error_imageFailed,
+                            Toast.LENGTH_SHORT).show();
                 }
                 return true;
         }
-        return super.onContextItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mFileDownloader.clearQueue();
+    }
+
+    private void saveImage() throws Exception {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File dir = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES), "SJTU BBS");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File fileOriginal = new File(getActivity().getCacheDir(), mFilename);
+            File fileNew = new File(dir.getAbsolutePath(), mFilename);
+            InputStream inputStream = new FileInputStream(fileOriginal);
+            OutputStream outputStream = new FileOutputStream(fileNew);
+            byte[] buffer = new byte[1025];
+            int len;
+            while ((len = inputStream.read(buffer, 0, 1024)) != -1) {
+                outputStream.write(buffer, 0, len);
+            }
+            inputStream.close();
+            outputStream.close();
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+            values.put(MediaStore.MediaColumns.DATA, fileNew.getAbsolutePath());
+            getActivity().getContentResolver()
+                    .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        }
     }
 }

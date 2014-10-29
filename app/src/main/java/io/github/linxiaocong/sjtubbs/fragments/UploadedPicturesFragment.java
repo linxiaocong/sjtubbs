@@ -177,7 +177,7 @@ public class UploadedPicturesFragment extends Fragment {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.grid_item_picture, parent, false);
             }
-            ImageView imageView = (ImageView)convertView.findViewById(R.id.imageView);
+            ImageView imageView = (ImageView)convertView.findViewById(R.id.iv_photo);
             String pictureUrl = getItem(position);
             String filename = pictureUrl.substring(pictureUrl.lastIndexOf('/') + 1);
             File f = new File(getActivity().getCacheDir(), filename);
