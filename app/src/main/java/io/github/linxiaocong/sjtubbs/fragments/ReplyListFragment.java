@@ -12,6 +12,8 @@ import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +66,7 @@ public class ReplyListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
         mTopic = (Topic) getArguments().getSerializable(EXTRA_TOPIC);
     }
 
@@ -118,7 +121,7 @@ public class ReplyListFragment extends Fragment {
                 Document doc = Jsoup.parse(htmlText);
                 if (doc != null) {
                     Elements imagesElements = doc.getElementsByTag("img");
-                    ArrayList<String> pictures = new ArrayList<String>();
+                    ArrayList<String> pictures = new ArrayList<>();
                     for (Element ele: imagesElements) {
                         String link = ele.attr("src");
                         if (!link.startsWith("http")) {
@@ -161,7 +164,7 @@ public class ReplyListFragment extends Fragment {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 String username = prefs.getString("username", "");
                 String password = prefs.getString("password", "");
-                if (username.equals("") || password.equals("")) {
+                if ("".equals(username) || "".equals(password)) {
                     Toast.makeText(getActivity(), R.string.error_login_needed, Toast.LENGTH_SHORT)
                             .show();
                     return true;
@@ -177,6 +180,26 @@ public class ReplyListFragment extends Fragment {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_replylist, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_share:
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, mTopic.getUrl());
+                startActivity(Intent.createChooser(intent,
+                        getResources().getString(R.string.action_share)));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupAdapter() {
@@ -201,7 +224,7 @@ public class ReplyListFragment extends Fragment {
         protected String doInBackground(String... params) {
             if (params[0] != null) {
                 if (mReplyList == null) {
-                    mReplyList = new ArrayList<Reply>();
+                    mReplyList = new ArrayList<>();
                 }
                 Log.d(tag, "getting replies for topic: " + mTopic.getTitle());
                 ReplyDAO replyDAO = new ReplyDAO(mContext);
