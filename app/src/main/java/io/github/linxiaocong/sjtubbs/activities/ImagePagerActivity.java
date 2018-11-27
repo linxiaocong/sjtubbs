@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ import io.github.linxiaocong.sjtubbs.utilities.BBSUtils;
 /**
  * Created by linxiaocong on 2014/10/25.
  */
-public class ImagePagerActivity extends ActionBarActivity {
+public class ImagePagerActivity extends AppCompatActivity {
 
     public static final String EXTRA_PICTURES = "extra_pictures";
     public static final String EXTRA_CURRENT_ITEM = "extra_currentItem";

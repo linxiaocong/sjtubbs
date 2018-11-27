@@ -2,7 +2,7 @@ package io.github.linxiaocong.sjtubbs.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import io.github.linxiaocong.sjtubbs.R;
@@ -11,7 +11,7 @@ import io.github.linxiaocong.sjtubbs.fragments.PrefsFragment;
 /**
  * Created by linxiaocong on 2014/10/21.
  */
-public class PrefsActivity extends ActionBarActivity {
+public class PrefsActivity extends AppCompatActivity {
 
     private static final String tag = "PrefsActivity";
 

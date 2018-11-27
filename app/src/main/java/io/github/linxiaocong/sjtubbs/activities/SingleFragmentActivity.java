@@ -1,12 +1,12 @@
 package io.github.linxiaocong.sjtubbs.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import io.github.linxiaocong.sjtubbs.R;
 
-public class SingleFragmentActivity extends ActionBarActivity {
+public class SingleFragmentActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
