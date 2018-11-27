@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "io.github.linxiaocong.sjtubbs"
         minSdkVersion 16
-        targetSdkVersion 21
+        targetSdkVersion 28
     }
 
     buildTypes {
@@ -26,9 +26,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:+'
-    compile 'com.android.support:support-v13:+'
-    compile 'com.android.support:appcompat-v7:+'
-    compile 'com.github.chrisbanes.photoview:library:+'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:support-v4:+'
+    implementation 'com.android.support:support-v13:+'
+    implementation 'com.android.support:appcompat-v7:+'
+    implementation 'com.github.chrisbanes.photoview:library:+'
 }
